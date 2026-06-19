@@ -232,17 +232,29 @@ git remote -v
 
 ### Sync workflow
 
-```powershell
-# 1. Push to personal (public) remote
-gh auth switch -u brucero-ui
-git push origin main --tags
+A helper script `sync.ps1` is included in the repo root — it pulls the right gh token per account and pushes to both remotes:
 
-# 2. Push the same commits to the EMU mirror
-gh auth switch -u brucerosato_microsoft
-git push emu main --tags
+```powershell
+.\sync.ps1                    # push current branch + tags to both remotes
+.\sync.ps1 -Branch main       # push a specific branch
+.\sync.ps1 -SkipEmu           # personal only
+.\sync.ps1 -SkipPersonal      # EMU only
+.\sync.ps1 -Force             # force-push (use with care)
 ```
 
-GCM will refresh its stored credential to match the active `gh` account on the first push that needs it.
+Manual equivalent (no script):
+
+```powershell
+# Personal
+$t = gh auth token --user brucero-ui
+git -c credential.helper= push "https://x-access-token:$t@github.com/brucero-ui/demoboost.git" main --tags
+
+# EMU mirror
+$t = gh auth token --user brucerosato_microsoft
+git -c credential.helper= push "https://x-access-token:$t@github.com/brucerosato_microsoft/demoboost.git" main --tags
+```
+
+> **Why bypass Git Credential Manager?** GCM only stores one credential per host (`github.com`), so a normal `git push` can't auth as both identities. Embedding the gh-issued token in the push URL with `credential.helper=` (empty) sidesteps GCM entirely.
 
 To replicate this on a fresh clone:
 
