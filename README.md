@@ -1,6 +1,7 @@
 # DemoBoost
 
 A self-contained HTML **site rotator and demo analytics tool**, packaged as a Dataverse / Power Platform solution. Add a list of URLs, set an interval, and DemoBoost cycles through them in an embedded preview — capturing per-page load times, render times, and rotation analytics so you can hydrate caches and stress-test your demo path before going live.
+<img width="1928" height="1228" alt="image" src="https://github.com/user-attachments/assets/5ba1242e-fd43-42c1-958a-0e65a365ed0a" />
 
 > **Latest release: [v1.0.0.6](../../releases/latest)**
 
