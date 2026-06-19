@@ -53,6 +53,9 @@
       --radius-lg: 12px;
       --radius-xl: 16px;
       --radius-pill: 999px;
+
+      /* Dropdown chevron — dark glyph for light surfaces */
+      --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23242424' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' d='M2.5 4.5 6 8l3.5-3.5'/%3E%3C/svg%3E");
     }
 
     body.dark-mode {
@@ -82,6 +85,9 @@
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 1px rgba(0, 0, 0, 0.45);
       --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.40), 0 0 2px rgba(0, 0, 0, 0.45);
       --shadow-lg: 0 10px 32px rgba(0, 0, 0, 0.50), 0 0 4px rgba(0, 0, 0, 0.45);
+
+      /* Dropdown chevron — light glyph for dark surfaces */
+      --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23eef3fb' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' d='M2.5 4.5 6 8l3.5-3.5'/%3E%3C/svg%3E");
     }
 
     body.dark-mode header,
@@ -105,6 +111,11 @@
 
     body.dark-mode button:not(.start):not(.accent) {
       background: var(--panel);
+      color: var(--text);
+    }
+    body.dark-mode button:not(.start):not(.accent):hover {
+      background: var(--panel-hover);
+      border-color: var(--accent);
       color: var(--text);
     }
 
@@ -319,26 +330,42 @@
     input::placeholder { color: var(--text-tertiary); }
 
     select {
-      background: #ffffff;
+      background-color: var(--panel);
       border: 1px solid var(--border-strong);
-      border-bottom: 1px solid #616161;
+      border-bottom: 1px solid var(--text-secondary);
       color: var(--text);
-      padding: 0.45rem 1.6rem 0.45rem 0.65rem;
+      padding: 0.45rem 1.9rem 0.45rem 0.65rem;
       border-radius: var(--radius-md);
       font: inherit; font-size: 13px;
       cursor: pointer;
       -webkit-appearance: none; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23616161' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 0.55rem center;
-      transition: border-color 0.15s ease;
+      background-image: var(--select-arrow);
+      background-repeat: no-repeat;
+      background-position: right 0.6rem center;
+      background-size: 12px 12px;
+      transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
     }
-    select:hover { border-color: #a0a0a0; }
+    select:hover {
+      border-color: var(--accent);
+      background-color: var(--panel-hover);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
     select:focus {
       outline: none;
+      border-color: var(--accent);
       border-bottom: 2px solid var(--accent);
       padding-bottom: calc(0.45rem - 1px);
+      box-shadow: 0 0 0 2px var(--accent-soft);
     }
-    select option { background: #ffffff; color: var(--text); }
+    select option { background: var(--panel); color: var(--text); }
+    /* Dark-mode override: the shared `background: var(--panel)` shorthand above
+       resets background-repeat/position/size — re-apply the chevron in full. */
+    body.dark-mode select {
+      background-image: var(--select-arrow);
+      background-repeat: no-repeat;
+      background-position: right 0.6rem center;
+      background-size: 12px 12px;
+    }
 
     /* ───────────────── Buttons (Fluent 2) ───────────────── */
     button {
@@ -1592,6 +1619,18 @@
   </div>
 </div>
 
+<div class="intro-overlay" id="postSeedOverlay" role="dialog" aria-modal="true" aria-labelledby="postSeedTitle">
+  <div class="intro-modal">
+    <h2 id="postSeedTitle">✨ Sites ready</h2>
+    <p id="postSeedSummary"></p>
+    <p style="font-size:0.78rem;">Click <strong>▶ Start</strong> below to begin rotating now — same as the Start button in the top-right.</p>
+    <div class="intro-footer" style="justify-content:flex-end;">
+      <button id="postSeedCloseBtn" style="min-width:96px;">Close</button>
+      <button id="postSeedStartBtn" class="start" style="min-width:140px;">▶ Start</button>
+    </div>
+  </div>
+</div>
+
 <main>
 
   <section class="panel" id="urlPanel">
@@ -1600,6 +1639,8 @@
       <div class="panel-header">
         <span class="section-title">Sites</span>
       </div>
+
+      <ul id="siteList"></ul>
 
       <div>
         <label for="newUrl">Add New Site</label>
@@ -1612,8 +1653,6 @@
       </div>
 
       <button id="addBtn" class="start" style="width:100%;">Add site</button>
-
-      <ul id="siteList"></ul>
 
       <button id="clearBtn" class="stop" style="width:100%;">Clear all</button>
 
@@ -2205,22 +2244,28 @@
 
       const totalAdded = listCount + recordCount + fallbackRecordCount;
       const appNote = appid
-        ? `\nScoped to ${appLabel} (appid ${appid.slice(0,8)}\u2026).`
-        : (appKey === 'all' ? '' : `\n${appLabel} app GUID couldn't be resolved \u2014 seeded with default app context.`);
+        ? `Scoped to ${appLabel} (appid ${appid.slice(0,8)}\u2026).`
+        : (appKey === 'all' ? '' : `${appLabel} app GUID couldn't be resolved \u2014 seeded with default app context.`);
+      const escapeHtml = (s)=> String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const appNoteHtml = appNote ? `<br><span style="font-size:0.78rem;color:var(--text-tertiary);">${escapeHtml(appNote)}</span>` : '';
+      let summaryHtml;
       if(recordCount===0){
-        alert(
-          `\u2728 All set! Added ${totalAdded} suggested sites \u2014 ${listCount} list views and ${fallbackRecordCount} record views.${appNote}\n\n` +
-          'Tip: open one of the record views in the rotator and your first record will load automatically using your signed-in Dynamics session.'
-        );
+        summaryHtml =
+          `Added <strong>${totalAdded}</strong> suggested sites \u2014 ` +
+          `${listCount} list views and ${fallbackRecordCount} record views.` +
+          appNoteHtml +
+          `<br><br><span style="font-size:0.78rem;">Tip: open one of the record views in the rotator and your first record will load automatically using your signed-in Dynamics session.</span>`;
       } else {
-        alert(
-          `\u2728 All set! Added ${totalAdded} suggested sites:\n` +
-          `  \u2022 ${listCount} list views\n` +
-          `  \u2022 ${recordCount} first-record links\n` +
-          `  \u2022 ${fallbackRecordCount} record views${appNote}\n\n` +
-          'You\u2019re ready to start the rotator whenever you are.'
-        );
+        summaryHtml =
+          `Added <strong>${totalAdded}</strong> suggested sites:` +
+          `<ul style="margin:0.4rem 0 0;padding-left:1.15rem;">` +
+            `<li>${listCount} list views</li>` +
+            `<li>${recordCount} first-record links</li>` +
+            `<li>${fallbackRecordCount} record views</li>` +
+          `</ul>` +
+          appNoteHtml;
       }
+      openPostSeedModal(summaryHtml);
     } finally {
       setSeedButtonLoading(false);
     }
@@ -2306,6 +2351,10 @@
   const HEAP_GROWTH_BUDGET  = 600  * 1024 * 1024;     // ~600 MB sustained growth = leak signal
   let heapBaseline=null;                              // bytes at first "hot" sample
   let heapCriticalTriggered=false;                    // latches once so we don't spam the UI
+  // Snapshot of the heap reading that tripped HEAP_CRITICAL while kiosk mode
+  // was active. Surfaced via showHeapCriticalNotice() on kiosk exit so the
+  // banner never lands on top of a live demo.
+  let pendingHeapNotice=null;
   // FIFO purge bookkeeping. lastPurgeAt latches the action so we don't tear
   // down the iframe on every heap probe — only once per "climb above the line".
   // The reset path is automatic: once the heap drops back under HEAP_TRIM_BYTES
@@ -2416,6 +2465,23 @@
   introOverlay.addEventListener('click', e=>{ if(e.target===introOverlay) closeIntro(); });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape' && introOverlay.classList.contains('open')) closeIntro(); });
   if(!localStorage.getItem(INTRO_DISMISSED_KEY)) openIntro();
+
+  // Post-seed Start modal — duplicates the header Start button so users don't
+  // have to hunt for it after the seeding flow completes.
+  const postSeedOverlay   = document.getElementById('postSeedOverlay');
+  const postSeedSummary   = document.getElementById('postSeedSummary');
+  const postSeedStartBtn  = document.getElementById('postSeedStartBtn');
+  const postSeedCloseBtn  = document.getElementById('postSeedCloseBtn');
+  function openPostSeedModal(summaryHtml){
+    postSeedSummary.innerHTML = summaryHtml;
+    postSeedOverlay.classList.add('open');
+    postSeedStartBtn.focus();
+  }
+  function closePostSeedModal(){ postSeedOverlay.classList.remove('open'); }
+  postSeedCloseBtn.addEventListener('click', closePostSeedModal);
+  postSeedOverlay.addEventListener('click', e=>{ if(e.target===postSeedOverlay) closePostSeedModal(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && postSeedOverlay.classList.contains('open')) closePostSeedModal(); });
+  postSeedStartBtn.addEventListener('click', ()=>{ closePostSeedModal(); start(); });
 
   let sessionStart=null;
   let sessionFrozenMs=null;  // elapsed ms at time of stop — freezes the session timer display
@@ -3147,7 +3213,13 @@
     if(h.used>=HEAP_CRITICAL_BYTES && !heapCriticalTriggered){
       heapCriticalTriggered=true;
       try{ stop(); }catch(e){}
-      showHeapCriticalNotice(h);
+      // In kiosk mode, suppress the banner so the demo surface stays clean.
+      // Stash the snapshot and surface it the moment the user exits kiosk.
+      if(document.body.classList.contains('kiosk-mode')){
+        pendingHeapNotice = h;
+      } else {
+        showHeapCriticalNotice(h);
+      }
       return;
     }
     if(h.used>=HEAP_PURGE_BYTES){
@@ -3785,6 +3857,15 @@
   // Collapsible slide panels
   const mainEl = document.querySelector('main');
   const SITES_FULL = '400px', ANALYTICS_FULL = '360px', COLLAPSED_W = '18px';
+  // First launch each browser session — start with all panels expanded,
+  // unless kiosk mode is sticky-enabled (handled further below).
+  if(!sessionStorage.getItem('panel.sessionInit')
+     && localStorage.getItem('panel.kiosk.enabled') !== 'true'){
+    localStorage.setItem('panel.sites.collapsed', 'false');
+    localStorage.setItem('panel.analytics.collapsed', 'false');
+    localStorage.setItem('panel.header.collapsed', 'false');
+  }
+  sessionStorage.setItem('panel.sessionInit', '1');
   let sitesCollapsed     = localStorage.getItem('panel.sites.collapsed') === 'true';
   let analyticsCollapsed = localStorage.getItem('panel.analytics.collapsed') === 'true';
 
@@ -3851,6 +3932,12 @@
       setAnalyticsCollapsed(!!prior.analytics);
       setHeaderCollapsed(!!prior.header);
       document.body.classList.remove('kiosk-mode');
+      // Flush any heap-critical notice that was deferred while kiosk was on.
+      if(pendingHeapNotice){
+        const h=pendingHeapNotice;
+        pendingHeapNotice=null;
+        showHeapCriticalNotice(h);
+      }
     }
     localStorage.setItem(KIOSK_KEY, String(enabled));
     kioskBtn.setAttribute('aria-pressed', String(enabled));

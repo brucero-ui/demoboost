@@ -2,7 +2,7 @@
 
 A self-contained HTML **site rotator and demo analytics tool**, packaged as a Dataverse / Power Platform solution. Add a list of URLs, set an interval, and DemoBoost cycles through them in an embedded preview — capturing per-page load times, render times, and rotation analytics so you can hydrate caches and stress-test your demo path before going live.
 
-> **Latest release: [v1.0.0.5](../../releases/latest)**
+> **Latest release: [v1.0.0.6](../../releases/latest)**
 
 ## Download
 
@@ -10,15 +10,22 @@ Install files are published as **[GitHub Release assets](../../releases/latest)*
 
 | Build | File | Use when |
 |---|---|---|
-| **Unmanaged** | `DemoBoost_1_0_0_5.zip` | Demo / POC environments · you want the web resource to stay editable |
+| **Unmanaged** | `DemoBoost_1_0_0_6.zip` | Demo / POC environments · you want the web resource to stay editable |
 
-## What's new in v1.0.0.5
+## What's new in v1.0.0.6
 
-- Expanded help overlay with full **export / import**, **analytics panel**, and **persistent site cache** documentation
-- **Render Done** metric — measures when DOM activity and animations fully settle, complementing the standard `load` event
-- **vs Baseline** comparison — current render time vs. the slowest seen this session, so you can see the warm-cache speedup
-- Collapsible left (Sites) and right (Analytics) panels for a bigger live preview
-- Drag-to-reorder rotation sequence and friendly **Site Name** labels
+- **"Sites ready" Start modal** — after the seeding flow completes, a confirmation modal surfaces a duplicate **▶ Start** button so users don't have to hunt for the one in the header.
+- **App-scoped seeding** — seeded suggested sites now honor the active Dynamics **appid**, so first-record links and list/record views open inside the correct model-driven app context (with a graceful fallback note when the app GUID can't be resolved).
+- **Custom select control styling** — native `<select>` dropdowns get a custom chevron, hover/focus states, and accent-colored focus rings, all dark-mode aware.
+- **Dark-mode button polish** — non-primary buttons now have a proper hover treatment in dark mode (panel-hover background, accent border).
+- **Deferred kiosk heap warning** — `HEAP_CRITICAL` notices captured while kiosk mode is active are now held until kiosk exit, so the warning banner never lands on top of a live demo.
+
+### Previous release — v1.0.0.5
+- Expanded help overlay with full export / import, analytics, and persistent cache docs
+- **Render Done** metric (DOM + animation settle time) complementing the standard `load` event
+- **vs Baseline** comparison vs. the slowest render seen this session
+- Collapsible Sites and Analytics panels
+- Drag-to-reorder rotation sequence with friendly site name labels
 
 ---
 
@@ -59,7 +66,7 @@ DemoBoost is a single HTML web resource (`new_DemoBoost`) that runs inside any P
 | Property | Value |
 |----------|-------|
 | Solution unique name | `DemoBoost` |
-| Solution version | `1.0.0.5` |
+| Solution version | `1.0.0.6` |
 | Solution type | Unmanaged |
 | Custom tables | None |
 | Custom option sets | None |
@@ -104,7 +111,7 @@ Get the latest ZIP from **[Releases](../../releases/latest)**:
 
 | Build | File |
 |---|---|
-| **Unmanaged** | `DemoBoost_1_0_0_5.zip` |
+| **Unmanaged** | `DemoBoost_1_0_0_6.zip` |
 
 ### Step 2: Import
 
@@ -112,7 +119,7 @@ Get the latest ZIP from **[Releases](../../releases/latest)**:
 
 1. Download the ZIP from [Releases](../../releases/latest)
 2. Go to [make.powerapps.com](https://make.powerapps.com) → **Solutions** → **Import solution**
-3. Upload `DemoBoost_1_0_0_5.zip` → **Next** → **Import**
+3. Upload `DemoBoost_1_0_0_6.zip` → **Next** → **Import**
 4. **Publish all customizations** when prompted
 
 #### Option B: PAC CLI
@@ -122,7 +129,7 @@ Get the latest ZIP from **[Releases](../../releases/latest)**:
 pac auth create --url https://your-org.crm.dynamics.com
 
 # Import the solution
-pac solution import --path DemoBoost_1_0_0_5.zip --publish-changes
+pac solution import --path DemoBoost_1_0_0_6.zip --publish-changes
 ```
 
 ### Step 3: Open DemoBoost
@@ -185,8 +192,8 @@ demoboost/
   README.md
   src/
     new_DemoBoost.html              <- DemoBoost web resource source (single-file HTML)
-  release/v1.0.0.5/
-    DemoBoost_1_0_0_5.zip           <- Mirror of the published release asset
+  release/v1.0.0.6/
+    DemoBoost_1_0_0_6.zip           <- Mirror of the published release asset
 
 # Install zip is also published as a GitHub Release asset
 # — see the Releases tab.
