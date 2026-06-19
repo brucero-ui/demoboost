@@ -211,6 +211,61 @@ demoboost/
 
 ---
 
+## Maintainer Notes — Dual Hosting
+
+This project is mirrored across two GitHub accounts:
+
+| Role | URL | Visibility |
+|------|-----|------------|
+| Public canonical | https://github.com/brucero-ui/demoboost | Public |
+| Microsoft EMU mirror | https://github.com/brucerosato_microsoft/demoboost | Private (internal) |
+
+The local clone has two named remotes — `origin` (personal) and `emu` (Microsoft) — because Git Credential Manager only stores one credential per host, so the two GitHub identities can't share a single push URL.
+
+```powershell
+git remote -v
+# origin  https://github.com/brucero-ui/demoboost.git              (fetch)
+# origin  https://github.com/brucero-ui/demoboost.git              (push)
+# emu     https://github.com/brucerosato_microsoft/demoboost.git   (fetch)
+# emu     https://github.com/brucerosato_microsoft/demoboost.git   (push)
+```
+
+### Sync workflow
+
+```powershell
+# 1. Push to personal (public) remote
+gh auth switch -u brucero-ui
+git push origin main --tags
+
+# 2. Push the same commits to the EMU mirror
+gh auth switch -u brucerosato_microsoft
+git push emu main --tags
+```
+
+GCM will refresh its stored credential to match the active `gh` account on the first push that needs it.
+
+To replicate this on a fresh clone:
+
+```powershell
+git clone https://github.com/brucero-ui/demoboost.git
+cd demoboost
+git remote add emu https://github.com/brucerosato_microsoft/demoboost.git
+```
+
+### Releases
+
+`git push` syncs commits, branches, and tags — **not GitHub Releases**. After tagging a new version, create the Release on each remote separately:
+
+```powershell
+gh auth switch -u brucero-ui
+gh release create vX.Y.Z DemoBoost_X_Y_Z.zip --repo brucero-ui/demoboost --title "DemoBoost vX.Y.Z" --notes-file RELEASE_NOTES.md
+
+gh auth switch -u brucerosato_microsoft
+gh release create vX.Y.Z DemoBoost_X_Y_Z.zip --repo brucerosato_microsoft/demoboost --title "DemoBoost vX.Y.Z" --notes-file RELEASE_NOTES.md
+```
+
+---
+
 ## License
 
 This solution is provided as-is for demonstration and enablement. See the disclaimer above. No warranty, express or implied.
