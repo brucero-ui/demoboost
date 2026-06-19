@@ -1,0 +1,3888 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>DemoBoost · Site Rotator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* ───────────────── M365 Copilot Chat–inspired theme ───────────────── */
+    :root {
+      /* Surfaces */
+      --bg:            #f5f5f5;             /* app canvas (Fluent neutralBackground3) */
+      --bg-secondary:  #fafafa;
+      --panel:         #ffffff;             /* card / sidebar surface              */
+      --panel-hover:   #f5f5f5;
+      --panel-soft:    #f8f8f8;             /* subtle inner surface                */
+
+      /* Text */
+      --text:           #242424;            /* Fluent neutralForeground1           */
+      --text-secondary: #616161;            /* Fluent neutralForeground3           */
+      --text-tertiary:  #8a8a8a;
+
+      /* Brand — Copilot gradient (blue → indigo → magenta → pink) */
+      --copilot-1: #2870ea;
+      --copilot-2: #1b4aef;
+      --copilot-3: #b936ee;
+      --copilot-4: #ec4899;
+      --copilot-gradient: linear-gradient(135deg, var(--copilot-1) 0%, var(--copilot-2) 30%, var(--copilot-3) 70%, var(--copilot-4) 100%);
+      --copilot-gradient-h: linear-gradient(90deg,  var(--copilot-1) 0%, var(--copilot-2) 30%, var(--copilot-3) 70%, var(--copilot-4) 100%);
+
+      /* Accents for highlight / focus rings */
+      --accent:     #6264f0;                /* Copilot indigo (Teams family)       */
+      --accent-alt: #b936ee;                /* Copilot magenta                     */
+      --accent-soft:#eef0ff;                /* very light brand tint               */
+
+      /* Semantic */
+      --danger:  #c4314b;
+      --danger-soft: #fdf3f5;
+      --good:    #107c10;
+      --good-soft:   #f1faf1;
+      --warn:    #f7630c;
+
+      /* Strokes & shadows (Fluent 2 elevation) */
+      --border:        #e0e0e0;
+      --border-strong: #d1d1d1;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.08), 0 0 2px rgba(0, 0, 0, 0.10);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 4px rgba(0, 0, 0, 0.08);
+
+      /* Radius */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-pill: 999px;
+    }
+
+    body.dark-mode {
+      --bg:            #0f1115;
+      --bg-secondary:  #131722;
+      --panel:         #171c28;
+      --panel-hover:   #21283a;
+      --panel-soft:    #1d2434;
+
+      --text:           #eef3fb;
+      --text-secondary: #c4ccda;
+      --text-tertiary:  #9ca8bd;
+
+      --accent-soft: #1f2948;
+
+      /* Brighter copilot accents for legibility on dark backgrounds */
+      --copilot-2: #6d8bff;
+      --copilot-3: #e07bff;
+
+      --danger:      #ff859d;
+      --danger-soft: #3b1f2a;
+      --good:        #67da81;
+      --good-soft:   #163325;
+
+      --border:        #2b3448;
+      --border-strong: #3a455f;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 1px rgba(0, 0, 0, 0.45);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.40), 0 0 2px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 10px 32px rgba(0, 0, 0, 0.50), 0 0 4px rgba(0, 0, 0, 0.45);
+    }
+
+    body.dark-mode header,
+    body.dark-mode .header-collapse-btn,
+    body.dark-mode input[type="number"],
+    body.dark-mode input[type="url"],
+    body.dark-mode input[type="text"],
+    body.dark-mode select,
+    body.dark-mode select option,
+    body.dark-mode .panel,
+    body.dark-mode li,
+    body.dark-mode .viewport-iframe,
+    body.dark-mode iframe,
+    body.dark-mode .stat-card,
+    body.dark-mode .load-badge,
+    body.dark-mode .help-modal,
+    body.dark-mode .help-section {
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    body.dark-mode button:not(.start):not(.accent) {
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    body.dark-mode button:active,
+    body.dark-mode .header-collapse-btn:active {
+      background: var(--panel-hover);
+    }
+
+    /* Boost contrast for analytics labels & table headers in dark mode */
+    body.dark-mode .section-title,
+    body.dark-mode .analytics-table th {
+      color: var(--text);
+    }
+    body.dark-mode tr th,
+    body.dark-mode .analytics-table th {
+      background-color: var(--panel-soft);
+    }
+    body.dark-mode tr th,
+    body.dark-mode tr td {
+      border-color: var(--border-strong);
+    }
+
+    body.dark-mode .btns button:hover {
+      background: var(--panel-hover);
+    }
+
+    body.dark-mode .bar-wrap {
+      background: #2a3244;
+    }
+
+    body.dark-mode .footer-note,
+    body.dark-mode .empty-state {
+      border-color: var(--border-strong);
+    }
+
+    body.dark-mode ::-webkit-scrollbar-thumb {
+      background: #4a5670;
+      border-color: var(--panel);
+    }
+
+    body.dark-mode .help-overlay {
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    * { box-sizing: border-box }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 14px; line-height: 1.45;
+      display: grid; grid-template-rows: auto 1fr;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      text-decoration: none;
+      color: #464feb;
+    }
+
+    tr th, tr td {
+      border: 1px solid #e6e6e6;
+    }
+
+    tr th {
+      background-color: #f5f5f5;
+    }
+
+    /* ───────────────── Top app bar ───────────────── */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.25rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem; align-items: center;
+      box-shadow: var(--shadow-sm);
+      min-height: 56px;
+      position: relative;
+      transition: min-height 0.2s ease, padding 0.2s ease;
+    }
+    /* Header collapse toggle — mirrors the side-panel collapse pattern */
+    .header-collapse-btn {
+      position: absolute; top: 50%; left: 0.5rem;
+      transform: translateY(-50%);
+      width: 28px; height: 22px;
+      padding: 0; min-width: 0;
+      border: 1px solid var(--border);
+      background: #ffffff; color: var(--text-secondary);
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem; line-height: 1; font-weight: 600;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      z-index: 5;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .header-collapse-btn:hover  { background: var(--panel-hover); color: var(--accent); border-color: var(--border-strong); }
+    .header-collapse-btn:active { background: #ebebeb; }
+    .header-collapse-btn .chev {
+      display: inline-block; transition: transform 0.25s ease;
+      font-size: 0.85rem; line-height: 1;
+    }
+    .header-collapse-btn .header-collapse-label {
+      display: none;
+      font-size: 0.62rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      line-height: 1;
+    }
+    body.header-collapsed .header-collapse-btn {
+      width: auto; padding: 0 0.55rem; gap: 0.35rem;
+    }
+    body.header-collapsed .header-collapse-btn .header-collapse-label {
+      display: inline-block;
+    }
+    body.header-collapsed .header-collapse-btn .chev { transform: rotate(180deg); }
+    /* Collapsed header: slim strip, only the toggle visible */
+    body.header-collapsed header {
+      min-height: 18px;
+      padding: 0;
+      display: block;
+      height: 18px;
+    }
+    body.header-collapsed header > h1,
+    body.header-collapsed header > .controls { display: none; }
+
+    h1 {
+      margin: 0; font-size: 1rem; font-weight: 600;
+      color: var(--text);
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      letter-spacing: -0.01em;
+      padding-left: 2.25rem; /* room for left-side collapse toggle */
+    }
+    /* Brand mark */
+    .copilot-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--copilot-gradient);
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 6px rgba(123, 60, 220, 0.25);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .copilot-mark svg { width: 27px; height: 27px; color: #fff; }
+    .copilot-mark .rocket-icon,
+    .copilot-mark .rocket-exhaust {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    .copilot-mark .rocket-exhaust {
+      opacity: 0;
+      transform-origin: 12px 22px;
+    }
+    .copilot-mark:hover .rocket-icon {
+      animation: rocket-launch-up 650ms cubic-bezier(0.2, 0.95, 0.25, 1) 1;
+    }
+    .copilot-mark:hover .rocket-exhaust {
+      animation: rocket-exhaust-straight 650ms ease-out 1;
+    }
+    @keyframes rocket-launch-up {
+      0%   { transform: translateY(0); }
+      20%  { transform: translateY(0); }
+      100% { transform: translateY(-6px); }
+    }
+    @keyframes rocket-exhaust-straight {
+      0%   { opacity: 0; transform: scaleY(0.35) translateY(0); }
+      15%  { opacity: 0.95; transform: scaleY(1.15) translateY(0); }
+      55%  { opacity: 0.65; transform: scaleY(1.35) translateY(1px); }
+      100% { opacity: 0; transform: scaleY(1.55) translateY(3px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .copilot-mark:hover .rocket-icon,
+      .copilot-mark:hover .rocket-exhaust {
+        animation: none;
+      }
+    }
+    .brand-sub {
+      font-size: 0.78rem; color: var(--text-secondary); font-weight: 400;
+      padding-left: 0.6rem; margin-left: 0.1rem;
+      border-left: 1px solid var(--border);
+    }
+
+    .controls { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .controls label {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.78rem; color: var(--text-secondary);
+      font-weight: 500; text-transform: none; letter-spacing: 0;
+      margin: 0;
+    }
+
+    /* ───────────────── Form fields (Fluent 2 style) ───────────────── */
+    input[type="number"], input[type="url"], input[type="text"] {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      border-bottom: 1px solid #616161;        /* underline emphasis */
+      color: var(--text);
+      padding: 0.45rem 0.65rem;
+      border-radius: var(--radius-md);
+      font: inherit; font-size: 13px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      min-width: 60px;
+    }
+    input[type="number"]:hover, input[type="url"]:hover, input[type="text"]:hover {
+      border-color: #a0a0a0;
+    }
+    input[type="number"]:focus, input[type="url"]:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--border-strong);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: calc(0.45rem - 1px);
+    }
+    input::placeholder { color: var(--text-tertiary); }
+
+    select {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      border-bottom: 1px solid #616161;
+      color: var(--text);
+      padding: 0.45rem 1.6rem 0.45rem 0.65rem;
+      border-radius: var(--radius-md);
+      font: inherit; font-size: 13px;
+      cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23616161' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.55rem center;
+      transition: border-color 0.15s ease;
+    }
+    select:hover { border-color: #a0a0a0; }
+    select:focus {
+      outline: none;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: calc(0.45rem - 1px);
+    }
+    select option { background: #ffffff; color: var(--text); }
+
+    /* ───────────────── Buttons (Fluent 2) ───────────────── */
+    button {
+      padding: 0.45rem 0.9rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      border: 1px solid var(--border-strong);
+      background: #ffffff;
+      color: var(--text);
+      font: inherit; font-weight: 600; font-size: 13px;
+      transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+      white-space: nowrap;
+    }
+    button:hover  { background: var(--panel-hover); border-color: var(--border-strong); }
+    button:active { background: #ebebeb; }
+    button[hidden] { display: none !important; }
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    /* Primary — Copilot gradient */
+    button.start {
+      background: var(--copilot-gradient);
+      border: 1px solid transparent;
+      color: #ffffff;
+      box-shadow: 0 1px 2px rgba(40, 112, 234, 0.25);
+    }
+    button.start:hover  { filter: brightness(1.05); box-shadow: 0 2px 8px rgba(123, 60, 220, 0.35); }
+    button.start:active { filter: brightness(0.95); }
+
+    /* Destructive */
+    button.stop {
+      background: #ffffff;
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    button.stop:hover  { background: var(--danger-soft); }
+    button.stop:active { background: #f7e3e7; }
+
+    /* Subtle accent (used by reset analytics, close, etc.) */
+    button.accent {
+      background: var(--accent-soft);
+      border-color: transparent;
+      color: var(--accent);
+    }
+    button.accent:hover { background: #e0e3ff; }
+
+    /* ───────────────── Main layout ───────────────── */
+    main {
+      display: grid;
+      grid-template-columns: 400px 1fr 360px;
+      gap: 0;
+      padding: 0;
+      background: var(--bg);
+      transition: grid-template-columns .25s ease;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* ───────────────── Side panels (sidebar look) ───────────────── */
+    .panel {
+      background: #ffffff;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      display: flex; flex-direction: row;
+      box-shadow: none;
+      overflow: hidden;
+      min-height: 0;
+    }
+    #urlPanel       { border-right: 1px solid var(--border); }
+    #analyticsPanel { border-left:  1px solid var(--border); }
+
+    .panel-content {
+      flex: 1;
+      padding: 1rem 1rem 1.25rem;
+      display: grid; gap: 0.85rem; align-content: start;
+      overflow-y: auto; overflow-x: hidden;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      opacity: 1; transform: translateX(0);
+      min-width: 0;
+    }
+    .panel-slid-left  .panel-content { opacity: 0; transform: translateX(-20px); pointer-events: none; }
+    .panel-slid-right .panel-content { opacity: 0; transform: translateX(20px);  pointer-events: none; }
+    .panel-slid-left  .panel-content,
+    .panel-slid-right .panel-content { width: 0; padding: 0; visibility: hidden; }
+
+    /* Collapse strip */
+    .panel-tab {
+      width: 18px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; background: transparent; border: none;
+      color: var(--text-tertiary);
+      transition: background 0.15s ease, color 0.15s ease;
+      position: relative; padding: 0;
+    }
+    .panel-tab:hover { background: var(--panel-hover); color: var(--accent); }
+    .panel-tab-right { border-left: 1px solid var(--border); }
+    .panel-tab-left  { border-right: 1px solid var(--border); }
+    .panel-tab-icon {
+      writing-mode: vertical-lr; font-size: 0.62rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      display: flex; align-items: center; gap: 6px; transition: transform 0.25s ease;
+      color: var(--text-secondary);
+    }
+    .panel-tab-right .panel-tab-icon { transform: rotate(180deg); }
+    .panel-tab-left  .panel-tab-icon { transform: rotate(0deg);   }
+    .panel-slid-left  .panel-tab-right .panel-tab-icon { transform: rotate(0deg);   }
+    .panel-slid-right .panel-tab-left  .panel-tab-icon { transform: rotate(180deg); }
+    .panel-tab-arrow { font-size: 0.85rem; }
+
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      user-select: none;
+    }
+    .section-title {
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem; color: var(--text-secondary);
+      margin-bottom: 0.3rem;
+      text-transform: none; letter-spacing: 0; font-weight: 500;
+    }
+
+    /* ───────────────── Site list (chat-history feel) ───────────────── */
+    ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
+    li {
+      display: grid; grid-template-columns: auto 1fr auto;
+      background: #ffffff;
+      border: 1px solid transparent;
+      padding: 0.5rem 0.55rem;
+      border-radius: var(--radius-md);
+      gap: 0.45rem; align-items: center;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+    li:hover { background: var(--panel-hover); }
+    li.active {
+      background: var(--accent-soft);
+      border-color: transparent;
+      position: relative;
+    }
+    li.active::before {
+      content: ''; position: absolute; left: -1px; top: 6px; bottom: 6px;
+      width: 3px; border-radius: 2px;
+      background: var(--copilot-gradient);
+    }
+
+    .entry-left  { display: grid; gap: 0.15rem; min-width: 0; }
+    .friendly    { font-size: 0.78rem; color: var(--text-secondary); }
+    .url {
+      max-width: 100%;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-family: 'Cascadia Mono', 'Consolas', 'Courier New', monospace;
+      font-size: 11.5px;
+      color: var(--text);
+    }
+    li.active .url { color: var(--accent); }
+
+    .btns { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+    .btns button {
+      padding: 0.25rem 0.55rem; font-size: 12px; font-weight: 500;
+      background: transparent; border: 1px solid transparent; color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+    }
+    .btns button:hover { background: #ffffff; border-color: var(--border); color: var(--text); }
+
+    .drag-handle {
+      cursor: grab; color: var(--text-tertiary); font-size: 0.95rem;
+      padding: 0 0.15rem;
+      display: flex; align-items: center; user-select: none; touch-action: none;
+      transition: color 0.15s ease;
+    }
+    .drag-handle:hover  { color: var(--text-secondary); }
+    .drag-handle:active { cursor: grabbing; color: var(--accent); }
+    li.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    li.dragging { opacity: 0.5; }
+
+    /* Empty state for the site list */
+    .empty-state {
+      display: block !important;
+      background: var(--accent-soft);
+      border: 1px dashed #c8cdff;
+      padding: 1rem 1.05rem;
+      border-radius: var(--radius-md);
+      grid-template-columns: none !important;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .empty-state-body,
+    .empty-state-title,
+    .empty-state-note {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .empty-state-mark {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--copilot-gradient);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 6px rgba(123, 60, 220, 0.25);
+      margin-bottom: 0.65rem;
+    }
+    .empty-state-mark svg { width: 30px; height: 30px; color: #fff; }
+    .empty-state-title {
+      font-size: 0.9rem; font-weight: 600; color: var(--text); margin: 0 0 0.25rem;
+    }
+    .empty-state-body {
+      font-size: 0.78rem; color: var(--text-secondary);
+      line-height: 1.55; margin: 0 0 0.75rem;
+    }
+    .empty-state-note {
+      font-size: 0.72rem; color: var(--text-tertiary);
+      margin: 0.55rem 0 0;
+    }
+    .empty-state .btns { display: grid; gap: 0.4rem; min-width: 0; }
+    .empty-state .btns > select {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .empty-state button {
+      width: 100%; justify-content: center;
+    }
+    /* Primary CTA inside the empty state — larger, with a soft Copilot glow */
+    .empty-state .cta-primary {
+      padding: 0.7rem 1rem;
+      font-size: 14px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 2px 6px rgba(40, 112, 234, 0.30), 0 0 0 4px rgba(98, 100, 240, 0.12);
+      animation: cta-pulse 2.6s ease-in-out infinite;
+      gap: 0.45rem;
+    }
+    .empty-state .cta-primary.is-loading {
+      animation: cta-loading-pulse 0.9s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      box-shadow: 0 0 0 0 rgba(98, 100, 240, 0.45), 0 8px 22px rgba(123, 60, 220, 0.48);
+      transform: translateY(-1px) scale(1.015);
+      cursor: progress;
+      opacity: 1;
+    }
+    .empty-state .cta-primary.is-loading:hover {
+      animation: cta-loading-pulse 0.9s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+    .empty-state .cta-primary.is-loading .seed-loader {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.45);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      display: inline-block;
+      animation: seed-spin 0.65s linear infinite;
+      flex: 0 0 auto;
+    }
+    .empty-state .cta-primary:hover {
+      animation: none;
+      box-shadow: 0 4px 14px rgba(123, 60, 220, 0.40), 0 0 0 4px rgba(98, 100, 240, 0.18);
+    }
+    .empty-state .cta-primary:focus-visible {
+      animation: none;
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    @keyframes cta-pulse {
+      0%, 100% { box-shadow: 0 2px 6px rgba(40, 112, 234, 0.30), 0 0 0 4px rgba(98, 100, 240, 0.12); }
+      50%      { box-shadow: 0 4px 14px rgba(123, 60, 220, 0.40), 0 0 0 6px rgba(98, 100, 240, 0.18); }
+    }
+    @keyframes cta-loading-pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(98, 100, 240, 0.42), 0 8px 18px rgba(123, 60, 220, 0.40);
+        transform: translateY(-1px) scale(1.01);
+      }
+      70% {
+        box-shadow: 0 0 0 12px rgba(98, 100, 240, 0.00), 0 10px 24px rgba(123, 60, 220, 0.52);
+        transform: translateY(-2px) scale(1.03);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(98, 100, 240, 0.00), 0 8px 18px rgba(123, 60, 220, 0.40);
+        transform: translateY(-1px) scale(1.01);
+      }
+    }
+    @keyframes seed-spin {
+      to { transform: rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .empty-state .cta-primary,
+      .empty-state .cta-primary.is-loading,
+      .empty-state .cta-primary.is-loading .seed-loader {
+        animation: none;
+      }
+    }
+    .empty-state .cta-primary svg { width: 24px; height: 24px; }
+    .seed-progress {
+      margin-top: 0.55rem;
+      display: none;
+      gap: 0.35rem;
+    }
+    .seed-progress.is-visible { display: grid; }
+    .seed-progress-label {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .seed-progress-track {
+      width: 100%;
+      height: 10px;
+      border-radius: var(--radius-pill);
+      background: #ffe2c2;
+      border: 1px solid #ffcb8e;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(176, 84, 0, 0.12);
+    }
+    .seed-progress-fill {
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(90deg, #ff8a00 0%, #ff6a00 42%, #ff4d00 100%);
+      box-shadow: 0 0 10px rgba(255, 106, 0, 0.55);
+      transition: width 0.22s ease;
+    }
+    .empty-state:hover { background: var(--accent-soft); }
+
+    /* ───────────────── Center: iframe / canvas ───────────────── */
+    main > section:not(.panel) {
+      padding: 0.85rem;
+      min-width: 0;
+      min-height: 0;
+    }
+    /* Stage holds the pool of cached iframes; only one is visible at a time */
+    .viewport-stage {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 56px - 1.7rem);
+      border-radius: var(--radius-lg);
+    }
+    .viewport-iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+      display: block;
+      visibility: hidden;            /* default hidden; one becomes visible at a time */
+      pointer-events: none;
+    }
+    .viewport-iframe.is-active {
+      visibility: visible;
+      pointer-events: auto;
+    }
+    iframe {
+      width: 100%;
+      height: calc(100vh - 56px - 1.7rem);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+      display: block;
+    }
+
+    /* Footer note ⇒ Copilot info banner */
+    .footer-note {
+      margin-top: 0.5rem; font-size: 0.78rem;
+      color: var(--text-secondary); line-height: 1.55;
+      background: var(--accent-soft);
+      padding: 0.75rem 0.85rem;
+      border-radius: var(--radius-md);
+      border: 1px solid #dde0ff;
+    }
+    .footer-note strong { color: var(--text); }
+
+    /* ───────────────── Analytics ───────────────── */
+    .analytics-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+    }
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 0.85rem;
+      display: grid; gap: 0.2rem;
+      box-shadow: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .stat-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-label {
+      font-size: 0.7rem; color: var(--text-secondary);
+      text-transform: none; letter-spacing: 0; font-weight: 500;
+    }
+    .stat-value {
+      font-size: 1.35rem; font-weight: 600;
+      color: var(--text);
+      background: none; -webkit-text-fill-color: currentColor;
+    }
+    .stat-sub { font-size: 0.7rem; color: var(--text-tertiary); }
+
+    .analytics-table {
+      width: 100%; border-collapse: collapse; font-size: 0.78rem;
+    }
+    .analytics-table th {
+      text-align: left; color: var(--text-secondary); font-weight: 600;
+      padding: 0.4rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      text-transform: none; letter-spacing: 0; font-size: 0.7rem;
+    }
+    .analytics-table td {
+      padding: 0.45rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle; color: var(--text);
+    }
+    .analytics-table tr:hover { background: var(--panel-hover); }
+    .analytics-table tr:last-child td { border-bottom: none; }
+    .bar-wrap {
+      background: #ececec; border-radius: var(--radius-pill);
+      height: 6px; width: 80px; overflow: hidden;
+      display: inline-block; vertical-align: middle; margin-left: 0.5rem;
+    }
+    .bar-fill {
+      height: 100%; border-radius: var(--radius-pill);
+      background: var(--copilot-gradient-h);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Countdown chip in header */
+    #countdown {
+      display: inline-flex; align-items: center;
+      font-size: 0.78rem; color: var(--text-secondary);
+      min-width: 70px;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-pill);
+      background: var(--panel-soft);
+    }
+    #countdown:empty { display: none; }
+
+    /* ───────────────── iframe progress + load badge ───────────────── */
+    @keyframes progress-shimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+    .iframe-progress {
+      position: absolute; top: 0.85rem; left: 0.85rem; right: 0.85rem;
+      height: 3px; width: 0%;
+      background: var(--copilot-gradient-h);
+      border-radius: var(--radius-pill);
+      transition: none; opacity: 0; z-index: 5;
+    }
+    .iframe-progress.loading {
+      opacity: 1; width: 85%;
+      transition: width 15s cubic-bezier(0.05,0,0.4,1), opacity 0.15s ease;
+    }
+    .iframe-progress.loaded {
+      opacity: 1; width: 95%; transition: width 0.35s ease;
+      background-size: 200% auto;
+      animation: progress-shimmer 1.2s linear infinite;
+    }
+    .iframe-progress.complete { opacity: 1; width: calc(100% - 0px); transition: width 0.2s ease; animation: none; background-size: auto; }
+    .iframe-progress.done     { opacity: 0; width: 100%; transition: opacity 0.6s ease; }
+
+    .load-badge {
+      position: absolute; bottom: 1.5rem; right: 1.5rem;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.55rem 0.75rem; font-size: 0.7rem;
+      z-index: 5;
+      display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 0.85rem;
+      min-width: 180px;
+      opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+      box-shadow: var(--shadow-md);
+    }
+    .load-badge-label {
+      color: var(--text-secondary); font-weight: 500;
+      text-transform: none; letter-spacing: 0;
+      font-size: 0.68rem; white-space: nowrap;
+    }
+    .load-badge-value {
+      font-weight: 600; color: var(--copilot-2);
+      font-variant-numeric: tabular-nums; text-align: right;
+    }
+    .load-badge-value.render  { color: var(--copilot-3); }
+    .load-badge-value.spinner { color: var(--good); }
+
+    .status-stack {
+      position: absolute;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      z-index: 960;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    /* Kiosk mode — keep only the kiosk toggle visible inside the status stack */
+    body.kiosk-mode .status-stack > #openAppsBtn,
+    body.kiosk-mode .status-stack > .demo-launch-btn,
+    body.kiosk-mode .status-stack > .load-badge { display: none !important; }
+    body.kiosk-mode .iframe-progress { display: none !important; }
+
+    .status-stack .load-badge {
+      position: static;
+      right: auto;
+      bottom: auto;
+      margin: 0;
+    }
+
+    /* Floating exit button: sits just above the status/load badge */
+    .open-apps-btn {
+      position: relative;
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(98, 100, 240, 0.45);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: var(--shadow-sm);
+    }
+    .open-apps-btn:hover {
+      background: rgba(238, 240, 255, 0.88);
+      border-color: rgba(98, 100, 240, 0.7);
+      color: var(--copilot-2);
+    }
+    .open-apps-btn:active {
+      background: rgba(224, 227, 255, 0.95);
+    }
+    body.dark-mode .open-apps-btn {
+      background: rgba(23, 28, 40, 0.72);
+      border-color: rgba(155, 173, 255, 0.45);
+      color: #d7deff;
+    }
+    body.dark-mode .open-apps-btn:hover {
+      background: rgba(33, 40, 58, 0.9);
+      border-color: rgba(178, 192, 255, 0.75);
+      color: #eef3ff;
+    }
+
+    /* Kiosk toggle: shares the floating chip styling, tints when active */
+    .kiosk-btn[aria-pressed="true"] {
+      background: var(--accent-soft);
+      border-color: rgba(98, 100, 240, 0.7);
+      color: var(--copilot-2);
+      opacity: 0.3;
+      transition: opacity 0.2s ease;
+    }
+    .kiosk-btn[aria-pressed="true"]:hover,
+    .kiosk-btn[aria-pressed="true"]:focus-visible {
+      opacity: 1;
+    }
+    body.dark-mode .kiosk-btn[aria-pressed="true"] {
+      background: rgba(98, 100, 240, 0.22);
+      border-color: rgba(178, 192, 255, 0.75);
+      color: #eef3ff;
+    }
+
+    /* ───────────────── Scrollbars (subtle) ───────────────── */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: #d1d1d1; border-radius: 999px;
+      border: 2px solid #ffffff;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
+
+    /* ───────────────── Help modal ───────────────── */
+    .help-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0, 0, 0, 0.32); backdrop-filter: blur(2px);
+      align-items: center; justify-content: center;
+    }
+    .help-overlay.open { display: flex; }
+    .help-modal {
+      background: #ffffff; border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem 2rem; width: min(760px, 90vw);
+      max-height: 85vh; overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      display: grid; gap: 1rem;
+    }
+    .help-modal h2 {
+      margin: 0; font-size: 1.15rem; font-weight: 600;
+      color: var(--text);
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .help-modal h3 {
+      margin: 0 0 0.35rem;
+      font-size: 0.78rem; font-weight: 600;
+      text-transform: none; letter-spacing: 0;
+      color: var(--accent);
+    }
+    .help-section {
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1.1rem; display: grid; gap: 0.4rem;
+    }
+    .help-modal p, .help-modal li {
+      margin: 0; font-size: 0.82rem;
+      color: var(--text-secondary); line-height: 1.65;
+    }
+    .help-modal ul { list-style: disc; padding-left: 1.25rem; display: block; gap: 0; }
+    .help-modal li {
+      display: list-item; border: none; background: none;
+      padding: 0; border-radius: 0;
+    }
+    .help-modal li:hover { background: none; }
+    .help-modal li.active::before { content: none; }
+    .help-modal strong { color: var(--text); font-weight: 600; }
+    .help-modal .kbd {
+      display: inline-block; background: var(--panel-soft);
+      border: 1px solid var(--border-strong);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 0.05rem 0.4rem;
+      font-family: 'Cascadia Mono', 'Consolas', monospace;
+      font-size: 0.75rem; color: var(--text);
+    }
+    .help-close-row { display: flex; justify-content: flex-end; }
+
+    /* ───────────────── Intro modal (first launch) ───────────────── */
+    .intro-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1100;
+      background: rgba(0, 0, 0, 0.42); backdrop-filter: blur(3px);
+      align-items: center; justify-content: center;
+    }
+    .intro-overlay.open { display: flex; }
+    .intro-modal {
+      background: #ffffff; border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem 1.75rem;
+      width: min(540px, 92vw);
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      display: grid; gap: 0.9rem;
+    }
+    .intro-modal h2 {
+      margin: 0; font-size: 1.1rem; font-weight: 600; color: var(--text);
+      display: inline-flex; align-items: center; gap: 0.45rem;
+    }
+    .intro-modal p {
+      margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;
+    }
+    .intro-modal ol {
+      margin: 0; padding-left: 1.15rem; display: grid; gap: 0.5rem;
+    }
+    .intro-modal ol li {
+      font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55;
+      display: list-item; border: none; background: none;
+      padding: 0; border-radius: 0;
+    }
+    .intro-modal ol li:hover { background: none; }
+    .intro-modal ol li.active::before { content: none; }
+    .intro-modal strong { color: var(--text); font-weight: 600; }
+    .intro-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.75rem; flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      padding-top: 0.85rem; margin-top: 0.25rem;
+    }
+    .intro-dont-show {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-size: 0.78rem; color: var(--text-secondary); cursor: pointer;
+      user-select: none;
+    }
+    .intro-dont-show input { margin: 0; cursor: pointer; }
+    body.dark-mode .intro-modal {
+      background: var(--panel); color: var(--text);
+    }
+    body.dark-mode .intro-overlay {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    /* ----------------- Carnival race flyout ----------------- */
+    .race-flyout {
+      position: fixed;
+      top: 70px;
+      right: 14px;
+      width: min(380px, calc(100vw - 28px));
+      max-height: calc(100vh - 88px);
+      background: linear-gradient(180deg, #fff8ec 0%, #fff2df 100%);
+      border: 1px solid #d9b17d;
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      z-index: 950;
+      overflow: hidden;
+      transform: translateX(115%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.28s ease, opacity 0.28s ease;
+    }
+    .race-flyout.open {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .race-flyout-head {
+      background:
+        repeating-linear-gradient(
+          -45deg,
+          #ba2f2f 0,
+          #ba2f2f 14px,
+          #f3e3bf 14px,
+          #f3e3bf 28px
+        );
+      border-bottom: 2px solid #8e2020;
+      color: #fff;
+      padding: 0.7rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .race-flyout-head h3 {
+      margin: 0;
+      font-size: 1.425rem;
+      font-family: inherit;
+      font-weight: 800;
+      letter-spacing: 0;
+      background: var(--copilot-gradient-h);
+      background-size: 220% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+      animation: derby-wave 2.2s ease-in-out infinite;
+    }
+    @keyframes derby-wave {
+      0%   { background-position: 0% 50%; transform: translateY(0); }
+      25%  { transform: translateY(-1px); }
+      50%  { background-position: 100% 50%; transform: translateY(0); }
+      75%  { transform: translateY(1px); }
+      100% { background-position: 0% 50%; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .race-flyout-head h3 { animation: none; }
+    }
+
+    #raceToggleBtn.race-locked {
+      display: none;
+    }
+
+    .confetti-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 2200;
+    }
+    .confetti-piece {
+      position: absolute;
+      top: -16px;
+      width: 10px;
+      height: 18px;
+      border-radius: 2px;
+      opacity: 0.95;
+      will-change: transform, opacity;
+      animation: confetti-fall var(--fall-ms, 2200ms) cubic-bezier(0.18, 0.74, 0.25, 1) forwards,
+                 confetti-spin var(--spin-ms, 900ms) linear infinite;
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    @keyframes confetti-fall {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, -10px, 0) rotate(0deg);
+      }
+      7% {
+        opacity: 0.95;
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--drift-x, 0px), calc(100vh + 40px), 0) rotate(var(--rot-end, 540deg));
+      }
+    }
+    @keyframes confetti-spin {
+      0%   { filter: brightness(1.08); }
+      50%  { filter: brightness(0.88); }
+      100% { filter: brightness(1.08); }
+    }
+    .race-flyout-body {
+      padding: 0.85rem;
+      display: grid;
+      gap: 0.75rem;
+      max-height: calc(100vh - 155px);
+      overflow: auto;
+    }
+    .race-hint {
+      margin: 0;
+      color: #6a4a22;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid #ecd5b3;
+      border-radius: 10px;
+      padding: 0.5rem 0.6rem;
+    }
+    .race-vibe {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .race-vibe-btn {
+      border: 1px solid #caa274;
+      background: #fff8ea;
+      color: #6a3d17;
+      border-radius: 999px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    }
+    .race-vibe-btn:hover {
+      background: #fff0d7;
+      border-color: #b87f46;
+      transform: translateY(-1px);
+    }
+    .race-vibe-btn.active {
+      background: #8e2020;
+      color: #fff6ea;
+      border-color: #8e2020;
+      box-shadow: 0 2px 8px rgba(142, 32, 32, 0.28);
+    }
+    .race-lane {
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.7));
+      border: 1px solid #e7ca9f;
+      border-radius: 10px;
+      padding: 0.45rem 0.55rem 0.55rem;
+      display: grid;
+      gap: 0.35rem;
+    }
+    .race-lane-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 0.45rem;
+      min-width: 0;
+    }
+    .race-rank {
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #8e2020;
+      background: #ffe9c7;
+      border: 1px solid #e1b676;
+      font-variant-numeric: tabular-nums;
+    }
+    .race-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #3f2a12;
+      font-weight: 600;
+      font-size: 0.78rem;
+    }
+    .race-metric {
+      color: #7a5530;
+      font-size: 0.7rem;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .race-track {
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid #dfba8b;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #c08953 0,
+          #c08953 14px,
+          #b67a43 14px,
+          #b67a43 28px
+        );
+      position: relative;
+      overflow: hidden;
+    }
+    .race-track::after {
+      content: '';
+      position: absolute;
+      right: 12px;
+      top: -1px;
+      bottom: -1px;
+      width: 10px;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          #ffffff 0,
+          #ffffff 4px,
+          #1f1f1f 4px,
+          #1f1f1f 8px
+        );
+      border-left: 1px solid rgba(0, 0, 0, 0.25);
+      border-right: 1px solid rgba(255, 255, 255, 0.45);
+      opacity: 0.9;
+    }
+    .race-horse {
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      transition: left 0.7s cubic-bezier(.22,.9,.28,1);
+      will-change: left;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,0.28));
+    }
+    .race-horse.gallop {
+      animation: horse-bob 360ms ease-in-out infinite alternate;
+    }
+    .race-horse.live {
+      animation:
+        horse-bob var(--horse-bob-ms, 300ms) ease-in-out infinite alternate,
+        horse-jitter var(--horse-jitter-ms, 620ms) ease-in-out infinite;
+    }
+    @keyframes horse-bob {
+      from { transform: translateY(-52%); }
+      to   { transform: translateY(-42%); }
+    }
+    @keyframes horse-jitter {
+      0%   { margin-left: 0px; }
+      25%  { margin-left: 1px; }
+      50%  { margin-left: -1px; }
+      75%  { margin-left: 2px; }
+      100% { margin-left: 0px; }
+    }
+    .race-empty {
+      border: 1px dashed #d2b48c;
+      background: rgba(255,255,255,0.7);
+      color: #6a4a22;
+      border-radius: 10px;
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .race-prize {
+      display: none;
+      background: linear-gradient(180deg, #fff7d9 0%, #ffeeb5 100%);
+      border: 1px solid #e4c46c;
+      border-radius: 12px;
+      padding: 0.6rem 0.75rem;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .race-prize.show {
+      display: flex;
+      animation: prize-pop 420ms cubic-bezier(.2,.95,.3,1);
+    }
+    @keyframes prize-pop {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .prize-plush {
+      font-size: 2.15rem;
+      line-height: 1;
+    }
+    .prize-text {
+      color: #5a3f1e;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+    .prize-text strong {
+      color: #8e2020;
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.1rem;
+    }
+
+    body.dark-mode .race-flyout {
+      background: linear-gradient(180deg, #22222a 0%, #1d1e25 100%);
+      border-color: #5e4a34;
+    }
+    body.dark-mode .race-flyout-head {
+      border-bottom-color: #6a3131;
+    }
+    body.dark-mode .race-hint,
+    body.dark-mode .race-empty {
+      background: rgba(255,255,255,0.06);
+      border-color: #5d4a31;
+      color: #edd8b4;
+    }
+    body.dark-mode .race-vibe-btn {
+      background: #2e2216;
+      border-color: #8b663f;
+      color: #f0d2a9;
+    }
+    body.dark-mode .race-vibe-btn:hover {
+      background: #3a2a1b;
+      border-color: #b18856;
+    }
+    body.dark-mode .race-vibe-btn.active {
+      background: #f0c17b;
+      color: #38220f;
+      border-color: #f0c17b;
+      box-shadow: 0 2px 10px rgba(240, 193, 123, 0.3);
+    }
+    body.dark-mode .race-lane {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-color: #664e32;
+    }
+    body.dark-mode .race-rank {
+      background: #3b2a19;
+      border-color: #8a663b;
+      color: #ffd9ab;
+    }
+    body.dark-mode .race-name,
+    body.dark-mode .prize-text {
+      color: #f4dfbf;
+    }
+    body.dark-mode .race-metric {
+      color: #d1b792;
+    }
+    body.dark-mode .race-prize {
+      background: linear-gradient(180deg, #3f331f 0%, #3b301d 100%);
+      border-color: #9b7a3a;
+    }
+    body.dark-mode .prize-text strong {
+      color: #ffcf8a;
+    }
+
+    /* Responsive trims */
+    @media (max-width: 1100px) {
+      main { grid-template-columns: 350px 1fr 320px; }
+    }
+    @media (max-width: 760px) {
+      .race-flyout {
+        right: 8px;
+        left: 8px;
+        width: auto;
+        top: 62px;
+      }
+    }
+    </style>
+  </head>
+<body>
+
+<header>
+  <h1>
+    <span class="copilot-mark" aria-hidden="true">
+      <!-- DemoBoost mark: rocket taking flight -->
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+        <g class="rocket-icon">
+          <path d="M12 2.8c-2.1 2.2-3.4 5.1-3.4 8.3v4.1h6.8v-4.1c0-3.2-1.3-6.1-3.4-8.3Z" fill="currentColor"/>
+          <path d="M8.6 11.7 6.2 13.6v2.2l2.4-1.2v-2.9Z" fill="currentColor"/>
+          <path d="M15.4 11.7 17.8 13.6v2.2l-2.4-1.2v-2.9Z" fill="currentColor"/>
+          <circle cx="12" cy="9.3" r="1.4" fill="#ffffff"/>
+          <path d="M10.1 15.2h3.8l-.7 2.7h-2.4l-.7-2.7Z" fill="currentColor"/>
+        </g>
+        <path class="rocket-exhaust" d="M12 17.7C9.6 19.1 7.8 21 5 23.2h14c-2.8-2.2-4.6-4.1-7-5.5Z" fill="#ff5a00"/>
+        <path class="rocket-exhaust" d="M12 18.8C10.6 19.9 9.4 21.2 7.8 22.8h8.4c-1.6-1.6-2.8-2.9-4.2-4Z" fill="#ffb347"/>
+      </svg>
+    </span>
+    <span>DemoBoost</span>
+    <span class="brand-sub">Site Rotator</span>
+  </h1>
+
+  <div class="controls">
+    <label for="sessionLength">Session</label>
+    <select id="sessionLength" title="Session length (minutes)">
+      <option value="15">15 min</option>
+      <option value="30">30 min</option>
+      <option value="45">45 min</option>
+      <option value="60" selected>60 min</option>
+      <option value="75">75 min</option>
+      <option value="90">90 min</option>
+      <option value="105">105 min</option>
+      <option value="120">120 min</option>
+      <option value="135">135 min</option>
+      <option value="150">150 min</option>
+      <option value="165">165 min</option>
+      <option value="180">180 min</option>
+    </select>
+    <label for="interval">Interval (s)</label>
+    <input id="interval" type="number" min="5" max="3600" step="5" value="20">
+    <button id="applyInterval">Apply</button>
+  </div>
+
+  <div class="controls">
+    <span id="countdown"></span>
+    <button id="raceToggleBtn" title="Toggle carnival race">Race</button>
+    <button id="themeToggleBtn" class="accent" title="Switch to dark mode" aria-pressed="false">Dark mode</button>
+    <button id="helpBtn" title="How to use this tool">Help</button>
+    <button id="stopBtn" class="stop">Stop</button>
+    <button id="startBtn" class="start">Start</button>
+  </div>
+
+  <button id="headerCollapseBtn" class="header-collapse-btn" title="Collapse header" aria-label="Collapse header" aria-expanded="true">
+    <span class="chev" aria-hidden="true">⌃</span>
+    <span class="header-collapse-label">Control</span>
+  </button>
+</header>
+
+<div class="help-overlay" id="helpOverlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="help-modal">
+    <h2 id="helpTitle">How to use DemoBoost</h2>
+
+    <div class="help-section">
+      <h3>★ Recommended demo workflow</h3>
+      <ul>
+        <li><strong>What this tool is for:</strong> DemoBoost <strong>pre-caches your Dynamics 365 sites in the background</strong> so they load instantly during your live demo — no cold-start delays in front of customers.</li>
+        <li>Run DemoBoost <strong>before every demo</strong> so each site is loaded, warmed, and cached in this tab's memory while you finish prepping.</li>
+        <li>Click <strong>▶ Start</strong> and let the rotator make at least <strong>one full pass</strong> through your sites — this hydrates the in-memory pool and gives you fast switches.</li>
+        <li>After a full rotation completes, the demo <strong>Launch</strong> buttons (<strong>Launch CSW Demo</strong>, <strong>Launch CE Demo</strong>, <strong>Launch FS Demo</strong>) become visible in the right-side panel. Click the one matching your demo — or click <strong>Open Apps Page</strong> — to navigate this same tab to your environment's apps page, keeping all cached content alive in memory.</li>
+        <li>Stay in this tab for the demo. Opening a new tab discards the in-memory cache and forces a cold reload.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>★ Not sure where to start?</h3>
+      <ul>
+        <li>If your Sites list is empty, click <strong>Load suggested Dynamics sites</strong> in the empty Sites panel to get a curated starter set — a great way to see how the tool works without typing any URLs.</li>
+        <li>Pick an app from the <strong>Seed for app</strong> dropdown (Sales Hub, Copilot Service workspace, Field Service, Customer Insights – Journeys, or All apps), then enter your Dynamics 365 org domain when prompted.</li>
+        <li>The booster seeds a mix of list and record views so the rotator has realistic content to cycle through immediately.</li>
+        <li>Once seeded, follow the <strong>Recommended demo workflow</strong> above: click <strong>▶ Start</strong> and let the rotator make at least one full pass to warm the cache, then click a <strong>Launch</strong> button (CSW / CE / FS) — or <strong>Open Apps Page</strong> — when you're ready to present.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>1 · Add Sites</h3>
+      <ul>
+        <li>Paste a URL into the <strong>Add New Site</strong> field in the Sites panel on the left.</li>
+        <li>Optionally enter a <strong>Site Name</strong> to give it a friendly label.</li>
+        <li>Click <strong>➕ Add Site</strong> (or press <span class="kbd">Enter</span>) to save it to the list.</li>
+        <li>Use the <strong>Edit</strong> button on any item to change its URL or name, then click <strong>Update</strong>.</li>
+        <li>Use the <strong>Delete</strong> button to remove a single site, or <strong>🗑️ Clear All</strong> to start fresh.</li>
+        <li>Drag the <strong>⋮⋮</strong> handle on any item to reorder the rotation sequence.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>2 · Start the Rotator</h3>
+      <ul>
+        <li>Set the <strong>⏱️ Interval</strong> (in seconds) — this controls how long each site is displayed before automatically advancing to the next one.</li>
+        <li>Click <strong>Apply</strong> to save the interval, then click <strong>▶ Start</strong> to begin rotating.</li>
+        <li>The countdown in the header shows how many seconds remain before the next rotation.</li>
+        <li>The currently displayed site is highlighted in the Sites list.</li>
+        <li>Click <strong>⏹ Stop</strong> at any time to pause rotation.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>3 · Manual Navigation</h3>
+      <ul>
+        <li>While the rotator is running you can still click any site's <strong>Go</strong> button to jump to it immediately.</li>
+        <li>The rotator will continue from the site you jumped to on the next tick.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>4 · Export &amp; Import</h3>
+      <ul>
+        <li>Give your session a label using the <strong>Demo Name</strong> field.</li>
+        <li>Click <strong>📥 Export</strong> to download a <code>.json</code> file containing your sites, name, and interval setting.</li>
+        <li>Click <strong>📤 Import</strong> to load a previously exported file and restore your full configuration.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>5 · Analytics Panel</h3>
+      <ul>
+        <li>The <strong>📊 Analytics</strong> panel on the right tracks: total rotations, session time, and per-page view counts.</li>
+        <li><strong>Load Event</strong> — time until the page's network resources finish loading.</li>
+        <li><strong>Render Done</strong> — time until all DOM activity and animations fully settle (a more complete measure of "ready").</li>
+        <li><strong>vs Baseline</strong> — compares the most recent render time against the slowest seen this session. A positive percentage means the page loaded faster than its worst recorded time.</li>
+        <li>Click <strong>🔄 Reset Analytics</strong> to clear all collected metrics.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>6 · Collapsing Panels</h3>
+      <ul>
+        <li>Click the thin <strong>vertical tab strip</strong> on the inner edge of either panel to collapse or expand it, giving more space to the live preview.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>7 · Persistent site cache</h3>
+      <ul>
+        <li>Once a site has been loaded, it stays alive in the background for up to <strong>3 hours</strong>. Rotating back to it is instant — no reload.</li>
+        <li>Switching to a cached site preserves its scroll position and any in-page state (open dialogs, applied filters, etc.).</li>
+        <li>The browser's HTTP cache is automatically shared across all tabs in the same browser profile. Each site is prefetched on add to nudge the browser to retain its responses; the remote server's caching headers still apply.</li>
+        <li><strong>Note:</strong> Authenticated apps (including Dynamics 365) typically send <code>Cache-Control: no-store</code>, which means their responses can't be reused across tabs. Within this tab, however, the in-memory pool keeps them live so switching is instant.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>8 · Tips &amp; Notes</h3>
+      <ul>
+        <li>Use the <strong>Share</strong> link from any Dynamics List or Record view for best results — these URLs load with full performance optimisations applied.<br>
+          Look for this button in the Dynamics command bar:<br>
+          <span style="display:inline-flex;align-items:center;gap:0;margin-top:0.4rem;border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.35);font-size:0.78rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+            <span style="display:inline-flex;align-items:center;gap:0.35rem;background:#1f1f1f;color:#e8e8e8;padding:0.3rem 0.75rem;border-right:1px solid #3a3a3a;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0;opacity:0.9"><path d="M13 3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0V5.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L15.586 4H14a1 1 0 0 1-1-1zM3 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5a1 1 0 1 0-2 0v5H3V7h5a1 1 0 0 0 0-2H3z"/></svg>
+              Share
+            </span>
+            <span style="background:#1f1f1f;color:#e8e8e8;padding:0.3rem 0.55rem;font-size:0.65rem;">&#8964;</span>
+          </span>
+        </li>
+        <li>It is <strong>not necessary to use the hero record</strong> for a given demo — any similar record will achieve the same performance boost.</li>
+        <li>Some sites block iframe embedding via security headers; if a page appears blank, try the direct share URL instead.</li>
+        <li>Your sites and settings are saved automatically in your browser's local storage — they persist between sessions on the same device.</li>
+        <li>This tool is intended <strong>for demonstrations only</strong> and is not supported in production environments.</li>
+        <li>Questions or feedback? Reach out to <strong>brucerosato@microsoft.com</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="help-close-row">
+      <button id="helpCloseBtn" class="accent" style="min-width:100px;">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="intro-overlay" id="introOverlay" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+  <div class="intro-modal">
+    <h2 id="introTitle">👋 Welcome to DemoBoost</h2>
+    <p>DemoBoost <strong>pre-caches your Dynamics 365 sites in the background</strong> so they load instantly during your live demo — no cold-start delays in front of customers.</p>
+    <ol>
+      <li><strong>Not sure where to start?</strong> If your Sites list is empty, click <strong>Load suggested Dynamics sites</strong>, pick the app you're demoing from <strong>Seed for app</strong>, and enter your org domain. A curated set of list and record views will be added for you.</li>
+      <li><strong>Let it warm up.</strong> Click <strong>▶ Start</strong> and let the rotator make at least <strong>one full pass</strong> through your sites. Each page is loaded and held in memory.</li>
+      <li><strong>Launch your demo from this same tab.</strong> Once a full rotation completes, the <strong>Launch CSW Demo</strong> / <strong>Launch CE Demo</strong> / <strong>Launch FS Demo</strong> buttons appear in the right-hand panel. Click the one matching your demo — or click <strong>Open Apps Page</strong> — to start. The cache stays alive only while this tab does, so don't open a new one.</li>
+    </ol>
+    <p style="font-size:0.78rem;">Click <strong>Help</strong> in the header anytime for the full guide.</p>
+    <div class="intro-footer">
+      <label class="intro-dont-show">
+        <input type="checkbox" id="introDontShowAgain"> Don't show this again
+      </label>
+      <button id="introCloseBtn" class="accent" style="min-width:120px;">Got it</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <section class="panel" id="urlPanel">
+
+    <div class="panel-content" id="urlPanelBody">
+      <div class="panel-header">
+        <span class="section-title">Sites</span>
+      </div>
+
+      <div>
+        <label for="newUrl">Add New Site</label>
+        <input id="newUrl" type="url" placeholder="https://example.com">
+      </div>
+
+      <div>
+        <label for="newName">Site Name (Optional)</label>
+        <input id="newName" type="text" placeholder="e.g. Sales Dashboard" />
+      </div>
+
+      <button id="addBtn" class="start" style="width:100%;">Add site</button>
+
+      <ul id="siteList"></ul>
+
+      <button id="clearBtn" class="stop" style="width:100%;">Clear all</button>
+
+      <div>
+        <label for="demoName">Demo Name</label>
+        <input id="demoName" type="text" placeholder="e.g. Contoso Sales Demo" style="width:100%;">
+      </div>
+
+      <div class="controls" style="display:flex;gap:0.5rem;">
+        <button id="exportBtn" style="flex: 1;">Export</button>
+        <button id="importBtn" style="flex: 1;">Import</button>
+      </div>
+
+      <div class="footer-note">
+        <strong>Tip:</strong> Hydrate your demos with DemoBoost. Use the URL from the "Share" function for best results.
+        <br><br>
+        <strong>Feedback?</strong> Reach out: <strong>brucerosato@microsoft.com</strong>
+        <br><br>
+        <em style="opacity: 0.8;">For demonstrations only. Not supported in production.</em>
+      </div>
+    </div>
+
+    <button class="panel-tab panel-tab-right" id="urlPanelTab" title="Toggle Sites panel">
+      <span class="panel-tab-icon">
+        <span class="panel-tab-arrow">&#8249;</span>
+        <span class="panel-tab-label">Sites</span>
+      </span>
+    </button>
+
+  </section>
+
+  <section style="position:relative;">
+    <div class="iframe-progress" id="iframeProgress"></div>
+    <div class="status-stack" aria-live="polite">
+      <button id="kioskBtn" class="open-apps-btn kiosk-btn" title="Kiosk mode — collapse panels and hide overlays" aria-pressed="false">Kiosk Mode</button>
+      <button id="openAppsBtn" class="open-apps-btn" title="Open the current environment's Apps page">Open Apps Page</button>
+      <button id="launchCswBtn" class="open-apps-btn demo-launch-btn" title="Launch Customer Service Workspace" hidden>Launch CSW Demo</button>
+      <button id="launchCeBtn" class="open-apps-btn demo-launch-btn" title="Launch Sales Hub" hidden>Launch CE Demo</button>
+      <button id="launchFsBtn" class="open-apps-btn demo-launch-btn" title="Launch Field Service" hidden>Launch FS Demo</button>
+      <div class="load-badge" id="loadBadge">
+        <span class="load-badge-label">Load Event</span>
+        <span class="load-badge-value" id="badgeLoad">—</span>
+        <span class="load-badge-label">Render Done</span>
+        <span class="load-badge-value render" id="badgeRender">—</span>
+        <span class="load-badge-label">Load Time</span>
+        <span class="load-badge-value spinner" id="badgeSpinner">—</span>
+        <span class="load-badge-label">Heap</span>
+        <span class="load-badge-value" id="badgeHeap">—</span>
+      </div>
+    </div>
+    <div id="viewportStage" class="viewport-stage"></div>
+  </section>
+
+  <section class="panel" id="analyticsPanel" style="overflow:hidden;">
+
+    <button class="panel-tab panel-tab-left" id="analyticsPanelTab" title="Toggle Analytics panel">
+      <span class="panel-tab-icon">
+        <span class="panel-tab-label">Analytics</span>
+        <span class="panel-tab-arrow">&#8250;</span>
+      </span>
+    </button>
+
+    <div class="panel-content" id="analyticsPanelBody">
+      <div class="panel-header">
+        <p class="section-title">Analytics</p>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total Rotations</span>
+          <span class="stat-value" id="statTotalRotations">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Session Time</span>
+          <span class="stat-value" id="statSessionTime">0m</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Sites Active</span>
+          <span class="stat-value" id="statSitesActive">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Performance</span>
+          <span class="stat-value" id="statPerfBoost" style="background:none;-webkit-text-fill-color:var(--good);color:var(--good);">—</span>
+          <span class="stat-sub">vs Baseline</span>
+        </div>
+      </div>
+
+      <button id="resetAnalyticsBtn" class="accent" style="margin-top:.5rem;">Reset analytics</button>
+
+      <p class="section-title" style="margin-top:.75rem">Load times by URL</p>
+      <p style="font-size:0.7rem;color:var(--text-secondary);margin:0;line-height:1.6;"><span style="color:var(--copilot-2);font-weight:600;">Load event</span> = network&nbsp;·&nbsp;<span style="color:var(--copilot-3);font-weight:600;">Render done</span> = all activity</p>
+      <table class="analytics-table" style="font-size:0.7rem;">
+        <thead><tr><th style="max-width:90px;">URL</th><th style="text-align:right;">Load Event</th><th style="text-align:right;">Render Done</th><th style="text-align:right;">vs Baseline</th></tr></thead>
+        <tbody id="loadTimesTableBody"></tbody>
+      </table>
+    </div>
+
+  </section>
+
+</main>
+
+<aside id="raceFlyout" class="race-flyout" aria-live="polite" aria-label="Performance race flyout">
+  <div class="race-flyout-head">
+    <h3>Performance Derby</h3>
+    <button id="raceCloseBtn" class="accent" style="padding:0.3rem 0.55rem;">Close</button>
+  </div>
+  <div class="race-flyout-body">
+    <p class="race-hint">Each horse advances by faster render times. Press Stop to award a giant stuffed animal to the winner.</p>
+    <div class="race-vibe" id="raceVibeControls" aria-label="Race vibe presets">
+      <button class="race-vibe-btn" data-vibe="subtle" type="button">Subtle</button>
+      <button class="race-vibe-btn" data-vibe="medium" type="button">Medium</button>
+      <button class="race-vibe-btn" data-vibe="chaotic" type="button">Chaotic</button>
+    </div>
+    <div id="racePrize" class="race-prize" role="status">
+      <div class="prize-plush" aria-hidden="true">🧸</div>
+      <div class="prize-text">
+        <strong id="raceWinnerName">No winner yet</strong>
+        <span id="raceWinnerMeta">Start the race to measure URL performance.</span>
+      </div>
+    </div>
+    <div id="raceLanes"></div>
+  </div>
+</aside>
+
+<div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
+
+<script>
+  const SITES_KEY='rotator.sites', INTERVAL_KEY='rotator.interval',
+        ENABLED_KEY='rotator.enabled', INDEX_KEY='rotator.index', MAX_SITES=100,
+        ANALYTICS_KEY='rotator.analytics', SESSION_LENGTH_KEY='rotator.sessionLength',
+    DYNAMICS_ORG_KEY='rotator.dynamicsOrg', THEME_KEY='rotator.theme',
+    RACE_FLYOUT_KEY='rotator.raceFlyoutOpen', RACE_VIBE_KEY='rotator.raceVibe',
+    POWERAPPS_ENV_ID_KEY='rotator.powerappsEnvironmentId',
+    APP_ID_CACHE_KEY='rotator.appIdCache';
+
+  // Practical starter set across Sales, Customer Service, and Field Service.
+  // Entries are grouped per model-driven app so that seeded URLs can be
+  // scoped via &appid=<GUID> to land in the correct app context.
+  const SHARED_ACCOUNTS  = { name: 'My Active Accounts', path: '/main.aspx?pagetype=entitylist&etn=account',         etn: 'account',         entitySet: 'accounts',         idField: 'accountid' };
+  const SHARED_CONTACTS  = { name: 'My Active Contacts', path: '/main.aspx?pagetype=entitylist&etn=contact',         etn: 'contact',         entitySet: 'contacts',         idField: 'contactid' };
+  const SHARED_ACTIVITIES= { name: 'My Activities',      path: '/main.aspx?pagetype=entitylist&etn=activitypointer', etn: 'activitypointer', entitySet: 'activitypointers', idField: 'activityid' };
+
+  const DYNAMICS_APP_CATALOG = {
+    sales: {
+      label: 'Sales Hub',
+      uniqueNames: ['Sales', 'SalesHub'],
+      nameMatches: ['sales hub'],
+      entries: [
+        { name: 'My Active Leads',         path: '/main.aspx?pagetype=entitylist&etn=lead',        etn: 'lead',        entitySet: 'leads',         idField: 'leadid' },
+        { name: 'My Open Opportunities',   path: '/main.aspx?pagetype=entitylist&etn=opportunity', etn: 'opportunity', entitySet: 'opportunities', idField: 'opportunityid' },
+        SHARED_ACCOUNTS,
+        SHARED_CONTACTS,
+        SHARED_ACTIVITIES,
+        { name: 'Quotes',   path: '/main.aspx?pagetype=entitylist&etn=quote',      etn: 'quote',      entitySet: 'quotes',      idField: 'quoteid' },
+        { name: 'Orders',   path: '/main.aspx?pagetype=entitylist&etn=salesorder', etn: 'salesorder', entitySet: 'salesorders', idField: 'salesorderid' },
+        { name: 'Products', path: '/main.aspx?pagetype=entitylist&etn=product',    etn: 'product',    entitySet: 'products',    idField: 'productid' }
+      ]
+    },
+    customerservice: {
+      label: 'Copilot Service workspace',
+      uniqueNames: [
+        'msdyn_CopilotServiceWorkspace', 'CopilotServiceWorkspace',
+        'msdyn_CustomerServiceWorkspace', 'CustomerServiceWorkspace',
+        'MSDynamics365CustomerServiceWorkspace'
+      ],
+      nameMatches: [
+        'copilot service workspace',
+        'customer service workspace',
+        'service workspace',
+        'copilot service'
+      ],
+      entries: [
+        { name: 'My Active Cases',     path: '/main.aspx?pagetype=entitylist&etn=incident',         etn: 'incident',         entitySet: 'incidents',         idField: 'incidentid' },
+        { name: 'Queues',              path: '/main.aspx?pagetype=entitylist&etn=queue',            etn: 'queue',            entitySet: 'queues',            idField: 'queueid' },
+        { name: 'Entitlements / SLA',  path: '/main.aspx?pagetype=entitylist&etn=entitlement',      etn: 'entitlement',      entitySet: 'entitlements',      idField: 'entitlementid' },
+        { name: 'Knowledge Articles',  path: '/main.aspx?pagetype=entitylist&etn=knowledgearticle', etn: 'knowledgearticle', entitySet: 'knowledgearticles', idField: 'knowledgearticleid' },
+        SHARED_ACCOUNTS,
+        SHARED_CONTACTS,
+        SHARED_ACTIVITIES
+      ]
+    },
+    fieldservice: {
+      label: 'Field Service',
+      uniqueNames: ['msdyn_FieldService', 'FieldService'],
+      nameMatches: ['field service'],
+      entries: [
+        { name: 'Active Work Orders',        path: '/main.aspx?pagetype=entitylist&etn=msdyn_workorder',           etn: 'msdyn_workorder',            entitySet: 'msdyn_workorders',            idField: 'msdyn_workorderid' },
+        { name: 'Work Order Service Tasks',  path: '/main.aspx?pagetype=entitylist&etn=msdyn_workorderservicetask', etn: 'msdyn_workorderservicetask', entitySet: 'msdyn_workorderservicetasks', idField: 'msdyn_workorderservicetaskid' },
+        { name: 'Bookable Resources',        path: '/main.aspx?pagetype=entitylist&etn=bookableresource',          etn: 'bookableresource',           entitySet: 'bookableresources',           idField: 'bookableresourceid' },
+        { name: 'Bookings',                  path: '/main.aspx?pagetype=entitylist&etn=bookableresourcebooking',   etn: 'bookableresourcebooking',    entitySet: 'bookableresourcebookings',    idField: 'bookableresourcebookingid' },
+        { name: 'Customer Assets',           path: '/main.aspx?pagetype=entitylist&etn=msdyn_customerasset',       etn: 'msdyn_customerasset',        entitySet: 'msdyn_customerassets',        idField: 'msdyn_customerassetid' },
+        { name: 'Agreements',                path: '/main.aspx?pagetype=entitylist&etn=msdyn_agreement',           etn: 'msdyn_agreement',            entitySet: 'msdyn_agreements',            idField: 'msdyn_agreementid' },
+        SHARED_ACCOUNTS
+      ]
+    },
+    cijourneys: {
+      label: 'Customer Insights - Journeys',
+      uniqueNames: [
+        'CustomerInsightsJourneys',
+        'msdynmkt_CustomerInsightsJourneys',
+        'msdyn_CustomerInsightsJourneys',
+        'MarketingApp'
+      ],
+      nameMatches: [
+        'customer insights - journeys',
+        'customer insights journeys',
+        'real-time marketing',
+        'real time marketing',
+        'marketing'
+      ],
+      entries: [
+        { name: 'Journeys',           path: '/main.aspx?pagetype=entitylist&etn=msdynmkt_journey',            etn: 'msdynmkt_journey',            entitySet: 'msdynmkt_journeys',            idField: 'msdynmkt_journeyid' },
+        { name: 'Segments',           path: '/main.aspx?pagetype=entitylist&etn=msdynmkt_segmentdefinition',  etn: 'msdynmkt_segmentdefinition',  entitySet: 'msdynmkt_segmentdefinitions',  idField: 'msdynmkt_segmentdefinitionid' },
+        { name: 'Emails',             path: '/main.aspx?pagetype=entitylist&etn=msdynmkt_email',              etn: 'msdynmkt_email',              entitySet: 'msdynmkt_emails',              idField: 'msdynmkt_emailid' },
+        { name: 'Forms',              path: '/main.aspx?pagetype=entitylist&etn=msdynmkt_form',               etn: 'msdynmkt_form',               entitySet: 'msdynmkt_forms',               idField: 'msdynmkt_formid' },
+        { name: 'Triggers',           path: '/main.aspx?pagetype=entitylist&etn=msdynmkt_customtrigger',      etn: 'msdynmkt_customtrigger',      entitySet: 'msdynmkt_customtriggers',      idField: 'msdynmkt_customtriggerid' },
+        { name: 'Events',             path: '/main.aspx?pagetype=entitylist&etn=msdynmkt_eventdefinition',    etn: 'msdynmkt_eventdefinition',    entitySet: 'msdynmkt_eventdefinitions',    idField: 'msdynmkt_eventdefinitionid' },
+        { name: 'Lead Scoring Models', path: '/main.aspx?pagetype=entitylist&etn=msdynmkt_leadscoreconfig',   etn: 'msdynmkt_leadscoreconfig',    entitySet: 'msdynmkt_leadscoreconfigs',    idField: 'msdynmkt_leadscoreconfigid' },
+        { name: 'Brand Profiles',     path: '/main.aspx?pagetype=entitylist&etn=msdynmkt_brandprofile',       etn: 'msdynmkt_brandprofile',       entitySet: 'msdynmkt_brandprofiles',       idField: 'msdynmkt_brandprofileid' },
+        SHARED_CONTACTS,
+        { name: 'My Active Leads',    path: '/main.aspx?pagetype=entitylist&etn=lead',                        etn: 'lead',                        entitySet: 'leads',                        idField: 'leadid' }
+      ]
+    },
+    all: {
+      label: 'All apps (Sales, Copilot Service, Field Service, CI-Journeys)',
+      uniqueNames: [],
+      nameMatches: [],
+      entries: null // resolved at seed time
+    }
+  };
+
+  // "All apps" entries = union of every catalog app, de-duplicated by path.
+  function getAllAppsEntries(){
+    const seen = new Set();
+    const out = [];
+    const buckets = [
+      DYNAMICS_APP_CATALOG.sales.entries,
+      DYNAMICS_APP_CATALOG.customerservice.entries,
+      DYNAMICS_APP_CATALOG.fieldservice.entries,
+      DYNAMICS_APP_CATALOG.cijourneys.entries
+    ];
+    for(const bucket of buckets){
+      for(const e of bucket){
+        if(!seen.has(e.path)){ seen.add(e.path); out.push(e); }
+      }
+    }
+    return out;
+  }
+
+  const SEED_APP_KEY = 'rotator.seedAppKey';
+
+  const entityMetaCache = new Map();
+
+  async function dataverseGetJson(url){
+    try {
+      const res = await fetch(url, {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'OData-MaxVersion': '4.0',
+          'OData-Version': '4.0'
+        }
+      });
+      if(!res.ok) return null;
+      return await res.json();
+    } catch(e) {
+      return null;
+    }
+  }
+
+  async function fetchFirstRecordId(org, entitySet, idField){
+    if(!entitySet || !idField) return null;
+    const base = `https://${org}/api/data/v9.2/${entitySet}`;
+
+    // Try a few query patterns; some tables dislike specific $select/$orderby combos.
+    const attempts = [
+      `${base}?$select=${idField}&$top=1`,
+      `${base}?$top=1`,
+      `${base}?$select=${idField}&$orderby=createdon desc&$top=1`
+    ];
+
+    for(const apiUrl of attempts){
+      const payload = await dataverseGetJson(apiUrl);
+      const first = payload && Array.isArray(payload.value) ? payload.value[0] : null;
+      if(!first) continue;
+      if(first[idField]) return first[idField];
+      const alt = Object.entries(first).find(([k,v])=>k.endsWith('id') && typeof v==='string' && v.length>20);
+      if(alt) return alt[1];
+    }
+    return null;
+  }
+
+  async function resolveEntityMeta(org, etn){
+    if(!etn) return null;
+    const key = `${org}|${etn}`;
+    if(entityMetaCache.has(key)) return entityMetaCache.get(key);
+
+    const byKeyUrl = `https://${org}/api/data/v9.2/EntityDefinitions(LogicalName='${etn}')?$select=EntitySetName,PrimaryIdAttribute`;
+    const byFilterUrl = `https://${org}/api/data/v9.2/EntityDefinitions?$select=LogicalName,EntitySetName,PrimaryIdAttribute&$filter=LogicalName eq '${etn}'&$top=1`;
+
+    const byKey = await dataverseGetJson(byKeyUrl);
+    if(byKey && byKey.EntitySetName && byKey.PrimaryIdAttribute){
+      const meta = { entitySet: byKey.EntitySetName, idField: byKey.PrimaryIdAttribute };
+      entityMetaCache.set(key, meta);
+      return meta;
+    }
+
+    const byFilter = await dataverseGetJson(byFilterUrl);
+    const first = byFilter && Array.isArray(byFilter.value) ? byFilter.value[0] : null;
+    if(first && first.EntitySetName && first.PrimaryIdAttribute){
+      const meta = { entitySet: first.EntitySetName, idField: first.PrimaryIdAttribute };
+      entityMetaCache.set(key, meta);
+      return meta;
+    }
+
+    entityMetaCache.set(key, null);
+    return null;
+  }
+
+  async function buildFirstRecordUrl(org, suggestion, appid){
+    if(!suggestion.etn) return null;
+
+    let id = await fetchFirstRecordId(org, suggestion.entitySet, suggestion.idField);
+
+    if(!id){
+      const meta = await resolveEntityMeta(org, suggestion.etn);
+      if(meta){
+        id = await fetchFirstRecordId(org, meta.entitySet, meta.idField);
+      }
+    }
+
+    if(!id) return null;
+    const appQuery = appid ? `appid=${encodeURIComponent(appid)}&` : '';
+    return `https://${org}/main.aspx?${appQuery}pagetype=entityrecord&etn=${encodeURIComponent(suggestion.etn)}&id=${encodeURIComponent(id)}`;
+  }
+
+  // Resolve a model-driven app's GUID. Strategy:
+  //   1) Try each known unique name via $filter (cheap exact match).
+  //   2) If none match, list all visible appmodules and score names locally
+  //      — most reliable for renamed apps like Copilot Service workspace
+  //      (formerly Customer Service workspace).
+  //   3) Cache the resolved GUID per (org, appKey) so repeat seeding is fast.
+  const appIdCache = new Map();
+  // Hydrate the in-memory cache from localStorage so resolved GUIDs survive page reloads.
+  try {
+    const raw = localStorage.getItem(APP_ID_CACHE_KEY);
+    if(raw){
+      const obj = JSON.parse(raw);
+      Object.entries(obj).forEach(([k,v]) => { if(v) appIdCache.set(k, v); });
+    }
+  } catch(e) {}
+  function persistAppIdCache(){
+    try {
+      const obj = {};
+      appIdCache.forEach((v,k) => { if(v) obj[k] = v; });
+      localStorage.setItem(APP_ID_CACHE_KEY, JSON.stringify(obj));
+    } catch(e) {}
+  }
+  async function resolveAppId(org, appKey){
+    const def = DYNAMICS_APP_CATALOG[appKey];
+    if(!def) return null;
+    const cacheKey = `${org}|${appKey}`;
+    if(appIdCache.has(cacheKey)) return appIdCache.get(cacheKey);
+
+    const base = `https://${org}/api/data/v9.2/appmodules?$select=appmoduleid,uniquename,name`;
+
+    // 1) Exact unique-name lookups
+    for(const uname of (def.uniqueNames || [])){
+      const data = await dataverseGetJson(`${base}&$filter=uniquename eq '${encodeURIComponent(uname)}'&$top=1`);
+      const id = data && data.value && data.value[0] && data.value[0].appmoduleid;
+      if(id){ appIdCache.set(cacheKey, id); persistAppIdCache(); return id; }
+    }
+
+    // 2) List & score all app modules client-side
+    const all = await dataverseGetJson(base);
+    const modules = (all && Array.isArray(all.value)) ? all.value : [];
+    const matchers = (def.nameMatches || []).map(s => s.toLowerCase());
+    const candidates = modules.map(m => {
+      const name = (m.name || '').toLowerCase();
+      const uname = (m.uniquename || '').toLowerCase();
+      let score = 0;
+      for(const term of matchers){
+        if(!term) continue;
+        if(name === term || uname === term) score += 100;
+        else if(name.includes(term) || uname.includes(term)) score += 25;
+      }
+      return { id: m.appmoduleid, name: m.name, uname: m.uniquename, score };
+    }).filter(c => c.score > 0)
+      .sort((a,b) => b.score - a.score);
+
+    if(candidates.length){
+      const id = candidates[0].id;
+      appIdCache.set(cacheKey, id);
+      persistAppIdCache();
+      return id;
+    }
+
+    appIdCache.set(cacheKey, null);
+    return null;
+  }
+
+  function withAppId(path, appid){
+    if(!appid) return path;
+    return path.replace(/^(\/main\.aspx\?)/i, `$1appid=${encodeURIComponent(appid)}&`);
+  }
+
+  function normalizeOrgDomain(raw){
+    if(!raw) return '';
+    return raw.trim()
+      .replace(/^https?:\/\//i,'')
+      .replace(/\/.*$/,'')
+      .toLowerCase();
+  }
+
+  // Recognises any Dynamics 365 / Dataverse host
+  //   contoso.crm.dynamics.com          (NA)
+  //   contoso.crm4.dynamics.com         (EMEA / regional)
+  //   contoso.api.crm.dynamics.com
+  //   contoso.dynamics.com              (legacy / custom)
+  const DYNAMICS_HOST_RE = /(^|\.)([a-z0-9-]+\.)?crm[0-9]*\.dynamics\.com$|(^|\.)dynamics\.com$/i;
+  function extractDynamicsHost(value){
+    if(!value) return '';
+    try {
+      // value may be a hostname or a full URL
+      const u = value.includes('://') ? new URL(value) : new URL('https://' + value);
+      const host = u.hostname.toLowerCase();
+      if(DYNAMICS_HOST_RE.test(host)) return host;
+    } catch(e) {}
+    return '';
+  }
+
+  // Detect the org URL from the current browser session, in priority order:
+  //   1) the page itself is hosted on a Dynamics org (web resource scenario)
+  //   2) the referring page is a Dynamics org
+  //   3) the iframe currently shows a Dynamics URL
+  //   4) a previously saved org domain in localStorage
+  function detectDynamicsOrg(){
+    const fromLocation = extractDynamicsHost(window.location.hostname);
+    if(fromLocation) return fromLocation;
+    const fromReferrer = extractDynamicsHost(document.referrer);
+    if(fromReferrer) return fromReferrer;
+    try {
+      const iframeSrc = viewport && viewport.src;
+      const fromIframe = extractDynamicsHost(iframeSrc);
+      if(fromIframe) return fromIframe;
+    } catch(e) {}
+    return localStorage.getItem(DYNAMICS_ORG_KEY) || '';
+  }
+
+  function setSeedButtonLoading(loading, totalSteps){
+    const btn = document.getElementById('seedDynamicsBtn');
+    if(!btn) return;
+
+    if(loading){
+      if(!btn.dataset.defaultLabel) btn.dataset.defaultLabel = btn.textContent.trim();
+      btn.classList.add('is-loading');
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      btn.innerHTML = '<span class="seed-loader" aria-hidden="true"></span>Loading suggested Dynamics sites...';
+      setSeedProgress(0, `Booster engaged: 0/${totalSteps || 0}`);
+      return;
+    }
+
+    btn.classList.remove('is-loading');
+    btn.disabled = false;
+    btn.removeAttribute('aria-busy');
+    const label = btn.dataset.defaultLabel || 'Load suggested Dynamics sites';
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+        <path d="M12 2.8c-2.1 2.2-3.4 5.1-3.4 8.3v4.1h6.8v-4.1c0-3.2-1.3-6.1-3.4-8.3Z" fill="currentColor"/>
+        <path d="M8.6 11.7 6.2 13.6v2.2l2.4-1.2v-2.9Z" fill="currentColor"/>
+        <path d="M15.4 11.7 17.8 13.6v2.2l-2.4-1.2v-2.9Z" fill="currentColor"/>
+        <circle cx="12" cy="9.3" r="1.4" fill="#ffffff"/>
+        <path d="M10.1 15.2h3.8l-.7 2.7h-2.4l-.7-2.7Z" fill="currentColor"/>
+        <path d="M12 17.7C9.6 19.1 7.8 21 5 23.2h14c-2.8-2.2-4.6-4.1-7-5.5Z" fill="#ff5a00"/>
+      </svg>
+      ${label}
+    `;
+    setSeedProgress(0, '', false);
+  }
+
+  function setSeedProgress(percent, label, visible=true){
+    const wrap = document.getElementById('seedProgress');
+    const fill = document.getElementById('seedProgressFill');
+    const txt = document.getElementById('seedProgressLabel');
+    const track = wrap ? wrap.querySelector('.seed-progress-track') : null;
+    if(!wrap || !fill || !txt) return;
+
+    wrap.classList.toggle('is-visible', visible);
+    if(!visible) return;
+
+    const clamped = Math.max(0, Math.min(100, Number(percent) || 0));
+    fill.style.width = `${clamped}%`;
+    if(track) track.setAttribute('aria-valuenow', String(clamped));
+    txt.textContent = label || `Booster progress: ${clamped}%`;
+  }
+
+  async function seedDynamicsSites(){
+    // Resolve which app catalog to seed from the selector (defaults to 'all')
+    const selectEl = document.getElementById('seedAppSelect');
+    const appKey = (selectEl && selectEl.value) || localStorage.getItem(SEED_APP_KEY) || 'all';
+    if(selectEl) localStorage.setItem(SEED_APP_KEY, appKey);
+    const appDef = DYNAMICS_APP_CATALOG[appKey] || DYNAMICS_APP_CATALOG.all;
+    const entries = appDef.entries || getAllAppsEntries();
+    const appLabel = appDef.label;
+
+    setSeedButtonLoading(true, entries.length);
+    try {
+      // Try to detect the current Dynamics org silently first
+      let org = extractDynamicsHost(window.location.hostname)
+             || extractDynamicsHost(document.referrer);
+      try {
+        if(!org && viewport && viewport.src) org = extractDynamicsHost(viewport.src);
+      } catch(e) {}
+
+      if(!org){
+        const last = localStorage.getItem(DYNAMICS_ORG_KEY) || 'yourorg.crm.dynamics.com';
+        const input = prompt(
+          `Enter your Dynamics 365 org domain to seed ${entries.length} suggested URLs for ${appLabel}.\n\n` +
+          'Example: contoso.crm.dynamics.com',
+          last
+        );
+        if(input === null) return;
+        org = normalizeOrgDomain(input);
+        if(!org){ alert('A valid org domain is required.'); return; }
+      }
+
+      localStorage.setItem(DYNAMICS_ORG_KEY, org);
+
+      // Resolve the model-driven app's GUID so URLs land in the right app shell.
+      // If automatic resolution fails (auth blocked, app renamed, etc.), prompt
+      // the user once for a manual GUID/URL so the seeded URLs still scope
+      // correctly. They can paste either a raw GUID or a /main.aspx?appid=... URL.
+      let appid = null;
+      if(appKey !== 'all'){
+        appid = await resolveAppId(org, appKey);
+        if(!appid){
+          const manual = prompt(
+            `Couldn't find the ${appLabel} app via Dataverse.\n\n` +
+            `Open the app once in Dynamics, copy its URL (or just the appid GUID), and paste it here. ` +
+            `Leave blank to seed without an app context.\n\n` +
+            `Examples:\n` +
+            `  https://${org}/main.aspx?appid=abc12345-...\n` +
+            `  abc12345-1234-1234-1234-1234567890ab`,
+            ''
+          );
+          if(manual){
+            const guidMatch = manual.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+            if(guidMatch){
+              appid = guidMatch[0];
+              appIdCache.set(`${org}|${appKey}`, appid);
+            }
+          }
+        }
+      }
+
+      const seeded = [];
+      let listCount = 0;
+      let recordCount = 0;
+      let fallbackRecordCount = 0;
+      for(let i=0;i<entries.length;i++){
+        const s = entries[i];
+        const listUrl = `https://${org}${withAppId(s.path, appid)}`;
+        seeded.push({ name: s.name, url: listUrl });
+        listCount++;
+
+        // For list views, append a companion record-view URL as the next item.
+        if(s.etn){
+          const recordUrl = await buildFirstRecordUrl(org, s, appid);
+          if(recordUrl){
+            seeded.push({ name: `${s.name} \u00b7 First Record`, url: recordUrl });
+            recordCount++;
+          } else {
+            const appQuery = appid ? `appid=${encodeURIComponent(appid)}&` : '';
+            const fallbackUrl = `https://${org}/main.aspx?${appQuery}pagetype=entityrecord&etn=${encodeURIComponent(s.etn)}`;
+            seeded.push({ name: `${s.name} \u00b7 Record View`, url: fallbackUrl });
+            fallbackRecordCount++;
+          }
+        }
+
+        const step = i + 1;
+        const pct = Math.round((step / entries.length) * 100);
+        setSeedProgress(pct, `Booster engaged: ${step}/${entries.length}`);
+      }
+      saveSites(seeded);
+      saveIndex(0);
+      seeded.forEach(s => prefetchSite(s.url));
+      renderList();
+
+      const totalAdded = listCount + recordCount + fallbackRecordCount;
+      const appNote = appid
+        ? `\nScoped to ${appLabel} (appid ${appid.slice(0,8)}\u2026).`
+        : (appKey === 'all' ? '' : `\n${appLabel} app GUID couldn't be resolved \u2014 seeded with default app context.`);
+      if(recordCount===0){
+        alert(
+          `\u2728 All set! Added ${totalAdded} suggested sites \u2014 ${listCount} list views and ${fallbackRecordCount} record views.${appNote}\n\n` +
+          'Tip: open one of the record views in the rotator and your first record will load automatically using your signed-in Dynamics session.'
+        );
+      } else {
+        alert(
+          `\u2728 All set! Added ${totalAdded} suggested sites:\n` +
+          `  \u2022 ${listCount} list views\n` +
+          `  \u2022 ${recordCount} first-record links\n` +
+          `  \u2022 ${fallbackRecordCount} record views${appNote}\n\n` +
+          'You\u2019re ready to start the rotator whenever you are.'
+        );
+      }
+    } finally {
+      setSeedButtonLoading(false);
+    }
+  }
+
+  const sessionLengthSelect=document.getElementById('sessionLength');
+  const intervalInput=document.getElementById('interval');
+  const applyIntervalBtn=document.getElementById('applyInterval');
+  const startBtn=document.getElementById('startBtn');
+  const stopBtn=document.getElementById('stopBtn');
+  const countdown=document.getElementById('countdown');
+  const raceToggleBtn=document.getElementById('raceToggleBtn');
+  const themeToggleBtn=document.getElementById('themeToggleBtn');
+  const RACE_UNLOCK_MINUTES=52;
+  const RACE_UNLOCK_MS=RACE_UNLOCK_MINUTES*60*1000;
+
+  const newUrlInput=document.getElementById('newUrl');
+  const newNameInput=document.getElementById('newName');
+  const addBtn=document.getElementById('addBtn');
+
+  const clearBtn=document.getElementById('clearBtn');
+  const exportBtn=document.getElementById('exportBtn');
+  const importBtn=document.getElementById('importBtn');
+  const siteList=document.getElementById('siteList');
+  // Viewport iframe — a single element navigated via iframe.src on each
+  // rotation. See getOrCreateViewportIframe / setViewport for the full
+  // rationale (creating + destroying iframes per rotation pushed the renderer
+  // toward OOM for heavy SPAs like Dynamics 365).
+  const viewportStage=document.getElementById('viewportStage');
+  let viewport=null;                                  // singleton viewport iframe (created lazily, navigated on each rotation)
+  const iframePool=new Map();                         // metadata only: key -> {iframe,url,name,lastViewedAt}
+  // Single-iframe model: we navigate the same iframe element via iframe.src=url
+  // on every rotation. Creating + destroying iframes per rotation produced a
+  // brief window where two heavy SPA documents (the dying old one + the
+  // newly-spawned one) co-existed in the renderer, which pushed Chromium
+  // toward OOM for apps like Dynamics 365. Re-navigating one element lets
+  // Chromium unload the prior document before the next loads, in the same slot.
+  //
+  // Heap budgets (Chromium-only — silently no-op elsewhere). Calibrated for the
+  // dominant workload: Dynamics 365 Customer Service Workspace, which lands at
+  // ~1.0–1.4 GB JS heap at steady state for a single iframe. Even with
+  // single-iframe in-place navigation, Chromium and same-origin SPAs (Service
+  // Workers, IndexedDB, BroadcastChannel) leak roughly 30–60 MB/rotation that
+  // GC won't reclaim. The element-recycling cadence below is what actually
+  // keeps the heap flat across long sessions.
+  //
+  // Thresholds scale with the browser's reported jsHeapSizeLimit so a tab
+  // with a 4 GB cap gets ~3 GB of working room instead of being stopped at a
+  // hard 2 GB. Floors keep low-memory machines safe.
+  let HEAP_TRIM_BYTES     = 1500 * 1024 * 1024;       // recomputed at init from jsHeapSizeLimit
+  let HEAP_PURGE_BYTES    = 2500 * 1024 * 1024;       // recomputed at init from jsHeapSizeLimit
+  let HEAP_CRITICAL_BYTES = 3000 * 1024 * 1024;       // recomputed at init from jsHeapSizeLimit
+  (function initHeapBudgets(){
+    try{
+      const lim=performance && performance.memory && performance.memory.jsHeapSizeLimit;
+      if(!lim) return;
+      // 55% start trimming, ~62% FIFO-purge in-memory document, 78% stop
+      // rotation. Leaves ~22% headroom before Chromium's renderer-OOM, which
+      // is enough for one more in-flight navigation to complete safely.
+      HEAP_TRIM_BYTES     = Math.max(1200*1024*1024, Math.floor(lim*0.55));
+      HEAP_PURGE_BYTES    = Math.max(1500*1024*1024, Math.floor(lim*0.62));
+      HEAP_CRITICAL_BYTES = Math.max(1800*1024*1024, Math.floor(lim*0.78));
+      // Enforce ordering in case unusual limits compress the tiers.
+      if(HEAP_PURGE_BYTES<=HEAP_TRIM_BYTES)     HEAP_PURGE_BYTES   =HEAP_TRIM_BYTES+128*1024*1024;
+      if(HEAP_CRITICAL_BYTES<=HEAP_PURGE_BYTES) HEAP_CRITICAL_BYTES=HEAP_PURGE_BYTES+128*1024*1024;
+    }catch(e){}
+  })();
+  // Force a full iframe element teardown + recreate every N rotations. In-
+  // place src navigation alone leaves the prior document partially alive in
+  // the renderer (same-origin sandbox can't be reset), so the heap creeps up
+  // ~50 MB/rotation. Recycling the element every IFRAME_RECYCLE_EVERY_N
+  // rotations gives Chromium a clean break and keeps the heap bounded.
+  // Trade-off: the recycle rotation is a "cold" load (no in-renderer cache).
+  // The HTTP cache still serves the bytes, so it's only marginally slower.
+  // Lowered from 5 → 3 so the heap stays flatter across long (60+ min) sessions.
+  const IFRAME_RECYCLE_EVERY_N = 3;
+  let rotationsSinceRecycle = 0;
+  let forceRecycleNext = false;
+  // Growth-rate detector: if heap climbs more than HEAP_GROWTH_BUDGET above the
+  // rolling baseline (set on the first sample that crossed HEAP_TRIM_BYTES),
+  // we flag a likely leak and log to console. Steady-state oscillation around
+  // 1.2 GB won't trigger this; a slow climb 1.2 → 1.6 → 2.0 will.
+  const HEAP_GROWTH_BUDGET  = 600  * 1024 * 1024;     // ~600 MB sustained growth = leak signal
+  let heapBaseline=null;                              // bytes at first "hot" sample
+  let heapCriticalTriggered=false;                    // latches once so we don't spam the UI
+  // FIFO purge bookkeeping. lastPurgeAt latches the action so we don't tear
+  // down the iframe on every heap probe — only once per "climb above the line".
+  // The reset path is automatic: once the heap drops back under HEAP_TRIM_BYTES
+  // we clear the latch so a future climb can re-purge.
+  let lastPurgeAt=0;
+  const PURGE_COOLDOWN_MS=10*1000;                    // minimum gap between forced purges
+  const resetAnalyticsBtn=document.getElementById('resetAnalyticsBtn');
+  const loadTimesTableBody=document.getElementById('loadTimesTableBody');
+  const iframeProgress=document.getElementById('iframeProgress');
+  const loadBadge=document.getElementById('loadBadge');
+  const openAppsBtn=document.getElementById('openAppsBtn');
+  const launchCswBtn=document.getElementById('launchCswBtn');
+  const launchCeBtn=document.getElementById('launchCeBtn');
+  const launchFsBtn=document.getElementById('launchFsBtn');
+  const statTotalRotations=document.getElementById('statTotalRotations');
+  const statSessionTime=document.getElementById('statSessionTime');
+  const statSitesActive=document.getElementById('statSitesActive');
+  const statPerfBoost=document.getElementById('statPerfBoost');
+
+  // Carnival race flyout
+  const raceFlyout=document.getElementById('raceFlyout');
+  const raceCloseBtn=document.getElementById('raceCloseBtn');
+  const raceLanes=document.getElementById('raceLanes');
+  const raceVibeControls=document.getElementById('raceVibeControls');
+  const racePrize=document.getElementById('racePrize');
+  const raceWinnerName=document.getElementById('raceWinnerName');
+  const raceWinnerMeta=document.getElementById('raceWinnerMeta');
+  const confettiLayer=document.getElementById('confettiLayer');
+  const RACE_VIBE_PRESETS={
+    subtle:{ amp:0.7, surgeEvery:30, surgeBoost:0.3, tickMs:310, bobMs:360, jitterMs:920 },
+    medium:{ amp:1.6, surgeEvery:15, surgeBoost:0.8, tickMs:230, bobMs:300, jitterMs:620 },
+    chaotic:{ amp:3.2, surgeEvery:8, surgeBoost:1.6, tickMs:130, bobMs:220, jitterMs:420 }
+  };
+  let raceWinnerKey=null;
+  let raceMotionTimer=null;
+  let raceMotionPhase=0;
+  let raceVibe='medium';
+
+  function isRaceUnlocked(){
+    const elapsed = sessionFrozenMs ?? (sessionStart ? Date.now()-sessionStart : 0);
+    return elapsed >= RACE_UNLOCK_MS;
+  }
+
+  function updateRaceUnlockState(){
+    const unlocked=isRaceUnlocked();
+    raceToggleBtn.classList.toggle('race-locked', !unlocked);
+    raceToggleBtn.disabled=!unlocked;
+    raceToggleBtn.hidden=!unlocked;
+    raceToggleBtn.title=unlocked
+      ? 'Toggle performance race'
+      : `Race unlocks after ${RACE_UNLOCK_MINUTES} minutes of session time`;
+    if(!unlocked) setRaceFlyoutOpen(false);
+  }
+
+  function launchConfettiBurst(){
+    if(!confettiLayer) return;
+    confettiLayer.innerHTML='';
+    const palette=['#2870ea','#1b4aef','#b936ee','#ec4899'];
+    const count=180;
+    for(let i=0;i<count;i++){
+      const piece=document.createElement('span');
+      piece.className='confetti-piece';
+      const color=palette[Math.floor(Math.random()*palette.length)];
+      const left=Math.random()*100;
+      const delay=Math.random()*350;
+      const width=6+Math.random()*8;
+      const height=8+Math.random()*14;
+      const fall=5100+Math.random()*5100;
+      const spin=1650+Math.random()*2100;
+      const drift=(Math.random()*320)-160;
+      const rot=360+(Math.random()*900);
+      piece.style.left=`${left}vw`;
+      piece.style.width=`${width}px`;
+      piece.style.height=`${height}px`;
+      piece.style.background=color;
+      piece.style.animationDelay=`${delay}ms, ${delay}ms`;
+      piece.style.setProperty('--fall-ms', `${fall}ms`);
+      piece.style.setProperty('--spin-ms', `${spin}ms`);
+      piece.style.setProperty('--drift-x', `${drift}px`);
+      piece.style.setProperty('--rot-end', `${rot}deg`);
+      confettiLayer.appendChild(piece);
+    }
+    setTimeout(()=>{ confettiLayer.innerHTML=''; }, 12600);
+  }
+
+  // Help modal
+  const helpBtn=document.getElementById('helpBtn');
+  const helpOverlay=document.getElementById('helpOverlay');
+  const helpCloseBtn=document.getElementById('helpCloseBtn');
+  function openHelp(){ helpOverlay.classList.add('open'); helpCloseBtn.focus(); }
+  function closeHelp(){ helpOverlay.classList.remove('open'); helpBtn.focus(); }
+  helpBtn.addEventListener('click', openHelp);
+  helpCloseBtn.addEventListener('click', closeHelp);
+  helpOverlay.addEventListener('click', e=>{ if(e.target===helpOverlay) closeHelp(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && helpOverlay.classList.contains('open')) closeHelp(); });
+
+  // Intro modal (first-launch welcome)
+  const INTRO_DISMISSED_KEY='rotator.introDismissed';
+  const introOverlay=document.getElementById('introOverlay');
+  const introCloseBtn=document.getElementById('introCloseBtn');
+  const introDontShowAgain=document.getElementById('introDontShowAgain');
+  function openIntro(){ introOverlay.classList.add('open'); introCloseBtn.focus(); }
+  function closeIntro(){
+    if(introDontShowAgain.checked) localStorage.setItem(INTRO_DISMISSED_KEY,'1');
+    introOverlay.classList.remove('open');
+  }
+  introCloseBtn.addEventListener('click', closeIntro);
+  introOverlay.addEventListener('click', e=>{ if(e.target===introOverlay) closeIntro(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && introOverlay.classList.contains('open')) closeIntro(); });
+  if(!localStorage.getItem(INTRO_DISMISSED_KEY)) openIntro();
+
+  let sessionStart=null;
+  let sessionFrozenMs=null;  // elapsed ms at time of stop — freezes the session timer display
+  let sessionTimerInterval=null;
+
+  let timer=null;
+  let nextTickTime=null;
+  let editIndex=null;
+  let countdownInterval=null;
+  let worker=null;
+  let sessionEndTimer=null;
+
+  // Web Worker script as a Blob so it runs off the main thread
+  // and is not throttled by the browser when the tab is in the background.
+  const workerScript=`
+    let interval=null;
+    self.onmessage=function(e){
+      if(e.data.cmd==='start'){
+        clearInterval(interval);
+        interval=setInterval(()=>{ self.postMessage('tick'); },e.data.sec*1000);
+      } else if(e.data.cmd==='stop'){
+        clearInterval(interval);
+      }
+    };
+  `;
+  function createWorker(){
+    if(worker) worker.terminate();
+    const blob=new Blob([workerScript],{type:'application/javascript'});
+    worker=new Worker(URL.createObjectURL(blob));
+    worker.onmessage=()=>tick();
+  }
+
+  const loadSites=()=>JSON.parse(localStorage.getItem(SITES_KEY)||'[]');
+  const saveSites=a=>localStorage.setItem(SITES_KEY,JSON.stringify(a));
+  const loadInterval=()=>Number(localStorage.getItem(INTERVAL_KEY)||20);
+  const saveInterval=s=>localStorage.setItem(INTERVAL_KEY,String(s));
+  const loadSessionLength=()=>Number(localStorage.getItem(SESSION_LENGTH_KEY)||60);
+  const saveSessionLength=m=>localStorage.setItem(SESSION_LENGTH_KEY,String(m));
+  const loadEnabled=()=>localStorage.getItem(ENABLED_KEY)==='true';
+  const saveEnabled=v=>localStorage.setItem(ENABLED_KEY,v?'true':'false');
+  const loadIndex=()=>Number(localStorage.getItem(INDEX_KEY)||0);
+  const saveIndex=i=>localStorage.setItem(INDEX_KEY,String(i));
+
+  function applyTheme(theme){
+    const isDark=theme==='dark';
+    document.body.classList.toggle('dark-mode',isDark);
+    themeToggleBtn.textContent=isDark?'Light mode':'Dark mode';
+    themeToggleBtn.setAttribute('aria-pressed',String(isDark));
+    themeToggleBtn.setAttribute('title',isDark?'Switch to light mode':'Switch to dark mode');
+    localStorage.setItem(THEME_KEY,isDark?'dark':'light');
+  }
+
+  function loadTheme(){
+    const saved=localStorage.getItem(THEME_KEY);
+    if(saved==='light'||saved==='dark') return saved;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+  }
+
+  function setRaceFlyoutOpen(open){
+    raceFlyout.classList.toggle('open',open);
+    raceToggleBtn.setAttribute('aria-pressed',String(open));
+    raceToggleBtn.classList.toggle('accent',open);
+    localStorage.setItem(RACE_FLYOUT_KEY,open?'true':'false');
+  }
+
+  function loadRaceFlyoutOpen(){
+    return localStorage.getItem(RACE_FLYOUT_KEY)==='true';
+  }
+
+  let raceAccessedThisSession=false;
+  function hasRaceBeenAccessed(){
+    return raceAccessedThisSession;
+  }
+
+  function markRaceAccessed(){
+    raceAccessedThisSession=true;
+  }
+
+  function loadRaceVibe(){
+    const saved=localStorage.getItem(RACE_VIBE_KEY);
+    return saved && RACE_VIBE_PRESETS[saved] ? saved : 'medium';
+  }
+
+  function applyRaceVibe(vibe){
+    raceVibe=RACE_VIBE_PRESETS[vibe] ? vibe : 'medium';
+    localStorage.setItem(RACE_VIBE_KEY,raceVibe);
+    raceVibeControls.querySelectorAll('[data-vibe]').forEach(btn=>{
+      const isActive=btn.dataset.vibe===raceVibe;
+      btn.classList.toggle('active',isActive);
+      btn.setAttribute('aria-pressed',String(isActive));
+    });
+    if(isRaceActive()){
+      stopRaceMotion();
+      startRaceMotion();
+    } else {
+      renderRaceBoard();
+    }
+  }
+
+  function hideRacePrize(){
+    racePrize.classList.remove('show');
+    raceWinnerKey=null;
+    raceWinnerName.textContent='No winner yet';
+    raceWinnerMeta.textContent='Start the race to measure URL performance.';
+  }
+
+  function raceScoreFromRender(render,minRender,maxRender){
+    if(render==null || !Number.isFinite(render)) return 0;
+    if(maxRender===minRender) return 98;
+    const ratio=(render-minRender)/(maxRender-minRender);
+    const normalized=1-ratio;
+    return 8+normalized*90;
+  }
+
+  function computeRaceRows(){
+    const sites=loadSites();
+    const a=loadAnalytics();
+    const loadTimes=a.loadTimes||{};
+    const views=a.views||{};
+
+    const measuredRenders=[];
+    Object.values(loadTimes).forEach(d=>{
+      const r=d.recentRender??null;
+      if(r!=null && Number.isFinite(r)) measuredRenders.push(r);
+    });
+
+    const minRender=measuredRenders.length?Math.min(...measuredRenders):null;
+    const maxRender=measuredRenders.length?Math.max(...measuredRenders):null;
+
+    return sites.map((s,idx)=>{
+      const key=s.name||s.url;
+      const data=loadTimes[key]||null;
+      const render=data ? (data.recentRender??null) : null;
+      const loadEvt=data ? (data.recentLoadEvent??null) : null;
+      const score=(minRender!=null && maxRender!=null)
+        ? raceScoreFromRender(render,minRender,maxRender)
+        : 0;
+      const viewsCount=views[key]?.count||0;
+      return {
+        key,
+        label:s.name||s.url,
+        render,
+        loadEvt,
+        score,
+        viewsCount,
+        idx,
+        tieBreakerHash:[...key].reduce((acc,ch)=>acc+ch.charCodeAt(0),0)%7
+      };
+    }).sort((aRow,bRow)=>{
+      if(bRow.score!==aRow.score) return bRow.score-aRow.score;
+      if(aRow.render!=null && bRow.render!=null && aRow.render!==bRow.render) return aRow.render-bRow.render;
+      return bRow.viewsCount-aRow.viewsCount;
+    });
+  }
+
+  function isRaceActive(){
+    return !!timer && loadEnabled();
+  }
+
+  function computeLiveOffset(row){
+    const preset=RACE_VIBE_PRESETS[raceVibe]||RACE_VIBE_PRESETS.medium;
+    const base=Math.max(0,Math.min(98,row.score));
+    if(!isRaceActive()) return base;
+    const wave=Math.sin((raceMotionPhase/8)+row.idx*0.7+row.tieBreakerHash)*preset.amp;
+    const surge=((raceMotionPhase+row.tieBreakerHash)%preset.surgeEvery===0)?preset.surgeBoost:0;
+    return Math.max(2,Math.min(98,base+wave+surge));
+  }
+
+  function startRaceMotion(){
+    if(raceMotionTimer) return;
+    const preset=RACE_VIBE_PRESETS[raceVibe]||RACE_VIBE_PRESETS.medium;
+    raceMotionTimer=setInterval(()=>{
+      raceMotionPhase=(raceMotionPhase+1)%10000;
+      renderRaceBoard();
+    },preset.tickMs);
+  }
+
+  function stopRaceMotion(){
+    if(!raceMotionTimer) return;
+    clearInterval(raceMotionTimer);
+    raceMotionTimer=null;
+  }
+
+  function renderRaceBoard(){
+    const rows=computeRaceRows();
+    raceLanes.innerHTML='';
+
+    if(!rows.length){
+      raceLanes.innerHTML='<div class="race-empty">No URLs in the race yet. Add sites to open the starting gate.</div>';
+      return;
+    }
+
+    rows.forEach((row,position)=>{
+      const preset=RACE_VIBE_PRESETS[raceVibe]||RACE_VIBE_PRESETS.medium;
+      const lane=document.createElement('div');
+      lane.className='race-lane';
+      const renderText=row.render!=null?`${row.render}ms`:'warming up';
+      const loadText=row.loadEvt!=null?`${row.loadEvt}ms`:'—';
+      const pct=computeLiveOffset(row);
+      const horseLeft=`calc(${pct}% - 16px)`;
+      const horseClass=`race-horse ${isRaceActive()?'live':'gallop'}`;
+      const horseTiming=`--horse-bob-ms:${preset.bobMs}ms;--horse-jitter-ms:${preset.jitterMs}ms;`;
+      lane.innerHTML=`
+        <div class="race-lane-row">
+          <span class="race-rank">${position+1}</span>
+          <span class="race-name" title="${row.label}">${row.label}</span>
+          <span class="race-metric">R ${renderText} · L ${loadText}</span>
+        </div>
+        <div class="race-track">
+          <span class="${horseClass}" style="left:${horseLeft};${horseTiming}" aria-hidden="true">🐎</span>
+        </div>
+      `;
+      raceLanes.appendChild(lane);
+    });
+  }
+
+  function awardRaceWinner(){
+    const rows=computeRaceRows();
+    const winner=rows.find(r=>r.render!=null);
+    if(!winner){
+      hideRacePrize();
+      return;
+    }
+    const isNewWinnerDeclaration = raceWinnerKey!==winner.key || !racePrize.classList.contains('show');
+    raceWinnerKey=winner.key;
+    raceWinnerName.textContent=`${winner.label} wins the derby!`;
+    raceWinnerMeta.textContent=`Big stuffed animal awarded for a blazing ${winner.render}ms render.`;
+    racePrize.classList.add('show');
+    setRaceFlyoutOpen(true);
+    if(isNewWinnerDeclaration && hasRaceBeenAccessed()) launchConfettiBurst();
+  }
+
+  const isHttpUrl=v=>{ try{const u=new URL(v); return u.protocol==='http:'||u.protocol==='https:';} catch{return false;} };
+
+  function safeDecode(value){
+    if(value==null) return '';
+    const text=String(value).trim();
+    if(!text) return '';
+    try { return decodeURIComponent(text); } catch(e) { return text; }
+  }
+
+  function savePowerAppsEnvironmentId(envId){
+    const cleaned=safeDecode(envId);
+    if(cleaned) localStorage.setItem(POWERAPPS_ENV_ID_KEY, cleaned);
+  }
+
+  function loadPowerAppsEnvironmentId(){
+    return safeDecode(localStorage.getItem(POWERAPPS_ENV_ID_KEY) || '');
+  }
+
+  function extractEnvironmentIdFromUrl(value){
+    if(!value) return '';
+    try {
+      const text=String(value);
+      const parsed=text.includes('://') ? new URL(text) : new URL('https://example.invalid'+(text.startsWith('/')?'':'/')+text);
+
+      const fromQuery =
+        parsed.searchParams.get('env') ||
+        parsed.searchParams.get('environment') ||
+        parsed.searchParams.get('environmentid') ||
+        parsed.searchParams.get('environmentId') ||
+        '';
+      if(fromQuery) return safeDecode(fromQuery);
+
+      const hash=parsed.hash && parsed.hash.startsWith('#') ? parsed.hash.slice(1) : '';
+      if(hash){
+        const hashParams=new URLSearchParams(hash.includes('?') ? hash.split('?').pop() : hash);
+        const fromHash =
+          hashParams.get('env') ||
+          hashParams.get('environment') ||
+          hashParams.get('environmentid') ||
+          hashParams.get('environmentId') ||
+          '';
+        if(fromHash) return safeDecode(fromHash);
+
+        const hashPathMatch=hash.match(/\/environments\/([^/?#]+)/i) || hash.match(/\/e\/([^/?#]+)/i);
+        if(hashPathMatch && hashPathMatch[1]) return safeDecode(hashPathMatch[1]);
+      }
+
+      const eMatch=parsed.pathname.match(/\/e\/([^/?#]+)/i);
+      if(eMatch && eMatch[1]) return safeDecode(eMatch[1]);
+
+      const envPathMatch=parsed.pathname.match(/\/environments\/([^/?#]+)/i);
+      if(envPathMatch && envPathMatch[1]) return safeDecode(envPathMatch[1]);
+    } catch(e) {}
+    return '';
+  }
+
+  function rememberEnvironmentFromUrl(value){
+    const envId=extractEnvironmentIdFromUrl(value);
+    if(envId) savePowerAppsEnvironmentId(envId);
+  }
+
+  function resolveCurrentEnvironmentId(){
+    const candidates=[];
+
+    try {
+      if(viewport && viewport.src) candidates.push(viewport.src);
+    } catch(e) {}
+
+    const sites=loadSites();
+    if(sites.length){
+      const idx=loadIndex()%sites.length;
+      if(sites[idx] && sites[idx].url) candidates.push(sites[idx].url);
+      for(const s of sites){ if(s.url) candidates.push(s.url); }
+    }
+
+    candidates.push(window.location.href, document.referrer);
+    const savedEnv=loadPowerAppsEnvironmentId();
+    if(savedEnv) candidates.push(`/environments/${savedEnv}`);
+
+    for(const candidate of candidates){
+      const envId=extractEnvironmentIdFromUrl(candidate);
+      if(envId){
+        savePowerAppsEnvironmentId(envId);
+        return envId;
+      }
+    }
+    return '';
+  }
+
+  function openCurrentEnvironmentAppsPage(){
+    const org = detectDynamicsOrg() || localStorage.getItem(DYNAMICS_ORG_KEY) || '';
+    if(org){
+      window.location.href = `https://${org}/main.aspx?forceUCI=1&pagetype=apps`;
+      return;
+    }
+    window.location.href = 'https://make.preview.powerapps.com/';
+  }
+
+  // Demo launch buttons — map to catalog keys used by resolveAppId.
+  // First click on a fresh environment hits Dataverse to look up the appmodule
+  // GUID by unique name / fuzzy display name; the result is cached in
+  // localStorage so subsequent clicks (and reloads) launch instantly.
+  const DEMO_APPS = {
+    csw: 'customerservice',  // Copilot Service workspace (formerly Customer Service workspace)
+    ce:  'sales',            // Sales Hub
+    fs:  'fieldservice'      // Field Service
+  };
+
+  async function openDynamicsApp(appKey){
+    const org = detectDynamicsOrg() || localStorage.getItem(DYNAMICS_ORG_KEY) || '';
+    if(!org){
+      alert('Open this page from inside a Dynamics 365 session first so the org domain can be detected.');
+      return;
+    }
+    const btn = (appKey==='customerservice'?launchCswBtn:appKey==='sales'?launchCeBtn:appKey==='fieldservice'?launchFsBtn:null);
+    const originalLabel = btn ? btn.textContent : '';
+    try {
+      if(btn && !appIdCache.has(`${org}|${appKey}`)){
+        btn.disabled = true;
+        btn.textContent = 'Locating app…';
+      }
+      const appid = await resolveAppId(org, appKey);
+      if(appid){
+        window.location.href = `https://${org}/main.aspx?forceUCI=1&appid=${encodeURIComponent(appid)}`;
+        return;
+      }
+      alert(`Couldn't locate the ${DYNAMICS_APP_CATALOG[appKey]?.label || appKey} app in ${org}. Opening the apps page so you can pick it manually.`);
+      window.location.href = `https://${org}/main.aspx?forceUCI=1&pagetype=apps`;
+    } catch(err){
+      console.error('openDynamicsApp failed', err);
+      window.location.href = `https://${org}/main.aspx?forceUCI=1&pagetype=apps`;
+    } finally {
+      if(btn){ btn.disabled = false; btn.textContent = originalLabel; }
+    }
+  }
+
+  function loadAnalytics(){
+    return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'{"totalRotations":0,"intervalHistory":[],"views":{},"loadTimes":{}}');
+  }
+  function saveAnalytics(a){ localStorage.setItem(ANALYTICS_KEY,JSON.stringify(a)); }
+
+  function recordView(url,name){
+    const a=loadAnalytics();
+    a.totalRotations=(a.totalRotations||0)+1;
+    const key=name||url;
+    if(!a.views[key]) a.views[key]={count:0,url};
+    a.views[key].count++;
+    const sec=loadInterval();
+    a.intervalHistory=a.intervalHistory||[];
+    a.intervalHistory.push(sec);
+    if(a.intervalHistory.length>200) a.intervalHistory=a.intervalHistory.slice(-200);
+    saveAnalytics(a);
+    renderAnalytics();
+  }
+
+  function renderAnalytics(){
+    const a=loadAnalytics();
+    const sites=loadSites();
+    statTotalRotations.textContent=a.totalRotations||0;
+    statSitesActive.textContent=sites.length;
+
+    // Self-heal timer state: if analytics were reset mid-run, restart the live
+    // session clock from "now" so Session Time resumes instead of sticking at 0m.
+    if(loadEnabled() && sessionFrozenMs===null && !sessionStart){
+      sessionStart=Date.now();
+    }
+
+    // Overall Performance Boost: average of vs-Slowest % across all URLs
+    const loadTimes=a.loadTimes||{};
+    const pctValues=Object.values(loadTimes)
+      .map(d=>{ const r=d.recentRender??null; const w=d.worstRender??null; return (r!=null&&w!=null&&w>0)?Math.round((1-(r/w))*100):null; })
+      .filter(v=>v!=null&&v>0);
+    const hasPerf = pctValues.length>0;
+    if(hasPerf){
+      const avgPct=Math.round(pctValues.reduce((s,v)=>s+v,0)/pctValues.length);
+      statPerfBoost.textContent=`+${avgPct}%`;
+    } else { statPerfBoost.textContent='—'; }
+    launchCswBtn.hidden = !hasPerf;
+    launchCeBtn.hidden  = !hasPerf;
+    launchFsBtn.hidden  = !hasPerf;
+    // Session time — use frozen value when stopped, live value when running
+    const elapsed = sessionFrozenMs ?? (sessionStart ? Date.now()-sessionStart : null);
+    if(elapsed!==null){
+      const mins=Math.floor(elapsed/60000);
+      const secs=Math.floor((elapsed%60000)/1000);
+      statSessionTime.textContent=`${mins}m ${secs}s`;
+    } else { statSessionTime.textContent='0m'; }
+
+    // Response times per URL table
+    loadTimesTableBody.innerHTML='';
+    
+    if(Object.keys(loadTimes).length===0){
+      loadTimesTableBody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">No load data yet. Run rotations to collect data.</td></tr>';
+    } else {
+      Object.entries(loadTimes).forEach(([label,data])=>{
+        const tr=document.createElement('tr');
+        // Support both new format (recentLoadEvent/recentRender) and legacy (recentLoad)
+        const loadEvt=data.recentLoadEvent??data.recentLoad??null;
+        const render=data.recentRender??data.recentLoad??null;
+        const fmtMs=v=>v!=null?`${v}ms`:'—';
+        // Improvement vs slowest render time seen this session
+        const worst=data.worstRender??null;
+        let improvText='—'; let improvColor='var(--text-secondary)';
+        if(worst!=null && render!=null && worst>0){
+          const pct=Math.round((1-(render/worst))*100);
+          if(pct>0){  improvText=`+${pct}%`; improvColor='var(--good)'; }
+          else if(pct<0){ improvText=`${pct}%`; improvColor='var(--danger)'; }
+          else { improvText='—'; }
+        }
+        tr.innerHTML=`
+          <td style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${label}">${label}</td>
+          <td style="text-align:right;font-variant-numeric:tabular-nums;color:var(--accent)">${fmtMs(loadEvt)}</td>
+          <td style="text-align:right;font-variant-numeric:tabular-nums;color:var(--accent-alt)">${fmtMs(render)}</td>
+          <td style="text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:${improvColor}">${improvText}</td>
+        `;
+        loadTimesTableBody.appendChild(tr);
+      });
+    }
+
+    // Page views table removed — view counts are still recorded for the race board.
+
+    renderRaceBoard();
+    updateRaceUnlockState();
+  }
+
+  function updateCountdown(){
+    if(!nextTickTime || !loadEnabled()){
+      countdown.textContent='';
+      return;
+    }
+    const remaining=Math.max(0,Math.ceil((nextTickTime-Date.now())/1000));
+    countdown.textContent=`Next: ${remaining}s`;
+  }
+
+  function renderList(){
+    const sites=loadSites();
+    const currentIndex=sites.length ? loadIndex()%sites.length : 0;
+    siteList.innerHTML='';
+
+    // Empty-state: no sites yet — offer to seed common Dynamics 365 areas.
+    // When the page can see a Dynamics org (own host, referrer, or current
+    // iframe URL) we use it silently; otherwise we prompt for the domain.
+    if(!sites.length){
+      const detectedOrg = detectDynamicsOrg();
+      const li=document.createElement('li');
+      li.className='empty-state';
+      const orgLineHtml = detectedOrg
+        ? `<p class="empty-state-note">Detected org: <code>${detectedOrg}</code> — we&rsquo;ll use it automatically.</p>`
+        : `<p class="empty-state-note">You\u2019ll be prompted for your org domain (e.g. <code>contoso.crm.dynamics.com</code>).</p>`;
+      li.innerHTML=`
+        <div class="empty-state-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+            <path d="M12 2.8c-2.1 2.2-3.4 5.1-3.4 8.3v4.1h6.8v-4.1c0-3.2-1.3-6.1-3.4-8.3Z" fill="currentColor"/>
+            <path d="M8.6 11.7 6.2 13.6v2.2l2.4-1.2v-2.9Z" fill="currentColor"/>
+            <path d="M15.4 11.7 17.8 13.6v2.2l-2.4-1.2v-2.9Z" fill="currentColor"/>
+            <circle cx="12" cy="9.3" r="1.4" fill="#ffffff"/>
+            <path d="M10.1 15.2h3.8l-.7 2.7h-2.4l-.7-2.7Z" fill="currentColor"/>
+            <path d="M12 17.7C9.6 19.1 7.8 21 5 23.2h14c-2.8-2.2-4.6-4.1-7-5.5Z" fill="#ff5a00"/>
+          </svg>
+        </div>
+        <p class="empty-state-title">No sites yet</p>
+        <p class="empty-state-body">
+          Not sure where to start? I can seed the
+          <strong>most common Dynamics 365 records and views</strong> for the app you pick below.
+          For each list view, I also add a first-record URL when available.
+        </p>
+        <div class="btns">
+          <label for="seedAppSelect" class="empty-state-note" style="margin:0 0 0.1rem 0;">Seed for app</label>
+          <select id="seedAppSelect" title="Choose which model-driven app to seed URLs for">
+            <option value="sales">Sales Hub</option>
+            <option value="customerservice">Copilot Service workspace</option>
+            <option value="fieldservice">Field Service</option>
+            <option value="cijourneys">Customer Insights - Journeys</option>
+            <option value="all">All apps (Sales, Copilot Service, Field Service, CI-Journeys)</option>
+          </select>
+          <button id="seedDynamicsBtn" class="start cta-primary">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+              <path d="M12 2.8c-2.1 2.2-3.4 5.1-3.4 8.3v4.1h6.8v-4.1c0-3.2-1.3-6.1-3.4-8.3Z" fill="currentColor"/>
+              <path d="M8.6 11.7 6.2 13.6v2.2l2.4-1.2v-2.9Z" fill="currentColor"/>
+              <path d="M15.4 11.7 17.8 13.6v2.2l-2.4-1.2v-2.9Z" fill="currentColor"/>
+              <circle cx="12" cy="9.3" r="1.4" fill="#ffffff"/>
+              <path d="M10.1 15.2h3.8l-.7 2.7h-2.4l-.7-2.7Z" fill="currentColor"/>
+              <path d="M12 17.7C9.6 19.1 7.8 21 5 23.2h14c-2.8-2.2-4.6-4.1-7-5.5Z" fill="#ff5a00"/>
+            </svg>
+            Load suggested Dynamics sites
+          </button>
+          <div class="seed-progress" id="seedProgress" aria-live="polite" aria-atomic="true">
+            <div class="seed-progress-track" role="progressbar" aria-label="Suggestion booster progress" aria-valuemin="0" aria-valuemax="100">
+              <span class="seed-progress-fill" id="seedProgressFill"></span>
+            </div>
+            <p class="seed-progress-label" id="seedProgressLabel">Booster ready</p>
+          </div>
+        </div>
+        ${orgLineHtml}
+      `;
+      siteList.append(li);
+      document.getElementById('seedDynamicsBtn').onclick = seedDynamicsSites;
+      const seedAppSelect = document.getElementById('seedAppSelect');
+      if(seedAppSelect){
+        const savedKey = localStorage.getItem(SEED_APP_KEY);
+        if(savedKey && DYNAMICS_APP_CATALOG[savedKey]) seedAppSelect.value = savedKey;
+        seedAppSelect.addEventListener('change', ()=> localStorage.setItem(SEED_APP_KEY, seedAppSelect.value));
+      }
+      renderRaceBoard();
+      return;
+    }
+
+    sites.forEach((entry,i)=>{
+      const li=document.createElement('li');
+      li.draggable=true;
+      li.dataset.index=i;
+      if(i===currentIndex && loadEnabled()) li.className='active';
+
+      // Drag handle
+      const handle=document.createElement('span');
+      handle.className='drag-handle';
+      handle.title='Drag to reorder';
+      handle.innerHTML='&#8942;&#8942;'; // ⋮⋮
+
+      const left=document.createElement('div');
+      left.className="entry-left";
+
+      const urlSpan=document.createElement('span');
+      urlSpan.className="url";
+      urlSpan.textContent=entry.url;
+
+      const friendly=document.createElement('span');
+      friendly.className="friendly";
+      friendly.textContent=entry.name || "(No name)";
+
+      left.append(urlSpan,friendly);
+
+      const btns=document.createElement('div');
+      btns.className="btns";
+
+      const edit=document.createElement('button'); edit.textContent='Edit';
+      edit.onclick=()=>{ editIndex=i; newUrlInput.value=entry.url; newNameInput.value=entry.name||''; addBtn.textContent='Update'; newUrlInput.focus(); };
+
+      const del=document.createElement('button'); del.textContent='Delete';
+      del.onclick=()=>{ saveSites(sites.filter((_,x)=>x!==i)); renderList(); };
+
+      btns.append(edit,del);
+      li.append(handle,left,btns);
+      siteList.append(li);
+    });
+
+    // Drag-and-drop reorder
+    let dragSrc=null;
+    siteList.querySelectorAll('li').forEach(li=>{
+      li.addEventListener('dragstart',e=>{
+        dragSrc=li;
+        li.classList.add('dragging');
+        e.dataTransfer.effectAllowed='move';
+      });
+      li.addEventListener('dragend',()=>{
+        li.classList.remove('dragging');
+        siteList.querySelectorAll('li').forEach(el=>el.classList.remove('drag-over'));
+      });
+      li.addEventListener('dragover',e=>{
+        e.preventDefault();
+        e.dataTransfer.dropEffect='move';
+        if(li!==dragSrc){
+          siteList.querySelectorAll('li').forEach(el=>el.classList.remove('drag-over'));
+          li.classList.add('drag-over');
+        }
+      });
+      li.addEventListener('drop',e=>{
+        e.preventDefault();
+        if(!dragSrc||dragSrc===li) return;
+        const from=Number(dragSrc.dataset.index);
+        const to=Number(li.dataset.index);
+        const a=loadSites();
+        const [moved]=a.splice(from,1);
+        a.splice(to,0,moved);
+        saveSites(a);
+        renderList();
+      });
+    });
+
+    renderRaceBoard();
+  }
+
+  // Load time tracking state
+  let pendingLoadKey=null;
+  let loadStartTime=null;
+  let renderMonitorCleanup=null;
+
+  function saveLoadTime(key,loadEventMs,renderMs,spinnerMs){
+    if(!key||!renderMs||renderMs<=0) return;
+    const a=loadAnalytics();
+    if(!a.loadTimes) a.loadTimes={};
+    if(!a.loadTimes[key]){
+      a.loadTimes[key]={firstLoadEvent:loadEventMs,firstRender:renderMs,firstSpinner:spinnerMs,
+                        recentLoadEvent:loadEventMs,recentRender:renderMs,recentSpinner:spinnerMs,
+                        prevSpinner:null,worstRender:renderMs};
+    } else {
+      a.loadTimes[key].prevSpinner=a.loadTimes[key].recentSpinner??null;
+      a.loadTimes[key].recentLoadEvent=loadEventMs;
+      a.loadTimes[key].recentRender=renderMs;
+      a.loadTimes[key].recentSpinner=spinnerMs;
+      a.loadTimes[key].worstRender=Math.max(a.loadTimes[key].worstRender??renderMs,renderMs);
+    }
+    saveAnalytics(a);
+    renderAnalytics();
+  }
+
+  function setViewport(url,name){
+    rememberEnvironmentFromUrl(url);
+    // Cancel any in-progress render monitor from a previous load
+    if(renderMonitorCleanup){ renderMonitorCleanup(); renderMonitorCleanup=null; }
+
+    const key=name||url;
+
+    // Pre-flight memory hygiene. If we've already crossed critical, bail out
+    // — the user has been warned and rotation is paused; don't start another
+    // heavy navigation that could tip the renderer into OOM.
+    trimParentPerfBuffers();
+    enforceHeapPressureLimit();
+    if(heapCriticalTriggered) return;
+
+    // Single reusable iframe (recycled every IFRAME_RECYCLE_EVERY_N rotations
+    // or on heap pressure). In-place src navigation is the most memory-friendly
+    // path for the common case; periodic element teardown is the only way to
+    // reliably free the renderer's hold on the prior document for heavy
+    // same-origin SPAs (Dynamics 365).
+    const iframe=getOrCreateViewportIframe();
+    rotationsSinceRecycle++;
+    // Trim the iframe's own resource-timing buffer from the prior load so
+    // perf entries don't accumulate across rotations.
+    try{ iframe.contentWindow && iframe.contentWindow.performance && iframe.contentWindow.performance.clearResourceTimings && iframe.contentWindow.performance.clearResourceTimings(); }catch(e){}
+
+    loadStartTime=Date.now();
+    pendingLoadKey=key;
+    iframe.src=url;
+
+    // Maintain pool metadata for any code that peeks at it.
+    iframePool.clear();
+    iframePool.set(key,{iframe,url,name:name||'',lastViewedAt:Date.now()});
+
+    iframeProgress.className='iframe-progress';
+    loadBadge.style.opacity='0';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>iframeProgress.classList.add('loading')));
+    renderList();
+  }
+
+  // Synchronous iframe teardown. Used only by Clear All / heap-critical paths
+  // — the rotation hot path reuses a single iframe via iframe.src=newUrl, so it
+  // never goes through here.
+  function disposeIframe(iframe){
+    if(!iframe) return;
+    try{ iframe.contentWindow && iframe.contentWindow.stop(); }catch(e){}
+    try{ iframe.remove(); }catch(e){}
+  }
+
+  // Chromium-only heap probe. Returns {used,limit,ratio} or null.
+  function getHeapInfo(){
+    try{
+      const m=performance.memory;
+      if(!m||!m.jsHeapSizeLimit) return null;
+      return {used:m.usedJSHeapSize,limit:m.jsHeapSizeLimit,ratio:m.usedJSHeapSize/m.jsHeapSizeLimit};
+    }catch(e){ return null; }
+  }
+
+  // Free up parent-page memory between rotations: the resource-timing buffer
+  // and any captured perf entries grow unboundedly during long sessions.
+  function trimParentPerfBuffers(){
+    try{ performance.clearResourceTimings && performance.clearResourceTimings(); }catch(e){}
+    try{ performance.clearMeasures && performance.clearMeasures(); }catch(e){}
+    try{ performance.clearMarks && performance.clearMarks(); }catch(e){}
+  }
+
+  // Tier 1 (HEAP_TRIM_BYTES): hot enough to start trimming parent perf buffers
+  // and arming the growth-rate detector.
+  // Tier 2 (HEAP_PURGE_BYTES): synchronously evict the in-memory iframe
+  // document (FIFO order) before the next rotation, freeing the renderer's
+  // hold on the oldest SPA. Rotation continues; the next tick gets a fresh
+  // iframe element from a cold load.
+  // Tier 3 (HEAP_CRITICAL_BYTES): stop rotation and surface a non-blocking
+  // banner. Trips well before Chromium's renderer-OOM threshold so the user
+  // gets a graceful pause instead of "Aw, Snap". The banner is dismissable
+  // and resets the latch so rotation can resume after the user investigates.
+  function enforceHeapPressureLimit(){
+    const h=getHeapInfo();
+    if(!h) return;
+    // Update the badge readout on every check.
+    const heapBadge=document.getElementById('badgeHeap');
+    if(heapBadge){
+      const mb=Math.round(h.used/1048576);
+      heapBadge.textContent=`${mb} MB`;
+      heapBadge.style.color = h.used>=HEAP_CRITICAL_BYTES ? 'var(--danger,#c4314b)'
+                            : h.used>=HEAP_PURGE_BYTES    ? 'var(--warn,#f7630c)'
+                            : h.used>=HEAP_TRIM_BYTES     ? 'var(--warn,#f7630c)'
+                            : '';
+    }
+    if(h.used>=HEAP_CRITICAL_BYTES && !heapCriticalTriggered){
+      heapCriticalTriggered=true;
+      try{ stop(); }catch(e){}
+      showHeapCriticalNotice(h);
+      return;
+    }
+    if(h.used>=HEAP_PURGE_BYTES){
+      purgeOldestInMemory(h);
+      // Fall through to also run trim-tier hygiene below.
+    }
+    if(h.used>=HEAP_TRIM_BYTES){
+      trimParentPerfBuffers();
+      // Force iframe element recycle on the next rotation — this is the only
+      // reliable way to release the renderer's hold on the prior SPA document
+      // for heavy same-origin apps.
+      forceRecycleNext=true;
+      // Arm the growth detector once we've crossed the "hot" line.
+      if(heapBaseline==null) heapBaseline=h.used;
+      else if(h.used-heapBaseline>=HEAP_GROWTH_BUDGET){
+        try{ console.warn(`[DemoBoost] Heap grew ${Math.round((h.used-heapBaseline)/1048576)} MB above baseline (${Math.round(heapBaseline/1048576)} MB) — likely leak.`); }catch(e){}
+        // Re-baseline so we don't spam: next warning fires after another full budget.
+        heapBaseline=h.used;
+      }
+    } else {
+      // Heap dropped back below the hot line — reset baseline so the next
+      // climb is measured fresh.
+      heapBaseline=null;
+    }
+  }
+
+  // FIFO purge: when the heap crosses HEAP_PURGE_BYTES (~2.5 GB on a 4 GB cap),
+  // synchronously tear down the in-memory iframe document and drop pool
+  // metadata oldest-first. The single-iframe model means at most one document
+  // is resident, so "FIFO oldest" is the currently-loaded SPA — destroying its
+  // element is what actually releases the renderer's hold. Rotation continues
+  // and the next tick lands in a fresh element (cold load, ~marginally slower).
+  function purgeOldestInMemory(h){
+    const now=Date.now();
+    if(now-lastPurgeAt < PURGE_COOLDOWN_MS) return;
+    lastPurgeAt=now;
+    const usedMb=Math.round((h.used||0)/1048576);
+    try{ console.warn(`[DemoBoost] FIFO purge at ${usedMb} MB (>= ${Math.round(HEAP_PURGE_BYTES/1048576)} MB) — dropping oldest in-memory document.`); }catch(e){}
+    // Drop pool entries oldest-first (lastViewedAt ascending). With one live
+    // iframe this is normally a single entry; the loop is future-proofing.
+    const entries=[...iframePool.entries()].sort((a,b)=>(a[1].lastViewedAt||0)-(b[1].lastViewedAt||0));
+    for(const [key,e] of entries){
+      if(e.iframe && e.iframe!==viewport) disposeIframe(e.iframe);
+      iframePool.delete(key);
+    }
+    // Synchronously destroy the live viewport element — this is the only way
+    // to force Chromium to release the prior same-origin SPA document.
+    if(viewport){
+      try{ viewport.contentWindow && viewport.contentWindow.stop(); }catch(e){}
+      try{ viewport.remove(); }catch(e){}
+      viewport=null;
+    }
+    rotationsSinceRecycle=0;
+    forceRecycleNext=true;
+    trimParentPerfBuffers();
+    // Hide the load badge — its stats reference the document we just dropped.
+    if(loadBadge) loadBadge.style.opacity='0';
+    if(iframeProgress) iframeProgress.className='iframe-progress';
+  }
+
+  // One-shot in-page banner so the user knows we paused rotation on purpose
+  // and the tab is still safe to keep open / reload.
+  function showHeapCriticalNotice(h){
+    if(document.getElementById('heapCriticalNotice')) return;
+    const usedMb=Math.round((h.used||0)/1048576);
+    const limitMb=Math.round((h.limit||0)/1048576);
+    const banner=document.createElement('div');
+    banner.id='heapCriticalNotice';
+    banner.style.cssText='position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:99999;background:var(--success-soft,#eaf7ee);color:var(--success,#0f7a3a);border:1px solid var(--success,#0f7a3a);padding:10px 14px;border-radius:8px;font:600 13px/1.4 system-ui;box-shadow:0 6px 24px rgba(0,0,0,.15);max-width:560px;';
+    banner.innerHTML=`<div>It looks like your cache is chock full of demo goodness (~${usedMb} MB / ${limitMb} MB) — this would be a great time to launch your demo on this tab, or use the Open Apps Page to launch a different application.</div>`;
+    const row=document.createElement('div');
+    row.style.cssText='margin-top:8px;display:flex;gap:8px;';
+    const dismiss=document.createElement('button');
+    dismiss.textContent='Dismiss & resume';
+    dismiss.style.cssText='padding:4px 10px;border-radius:6px;border:1px solid var(--success,#0f7a3a);background:transparent;color:var(--success,#0f7a3a);cursor:pointer;font:600 12px system-ui;';
+    dismiss.onclick=()=>{
+      heapCriticalTriggered=false;     // allow re-trigger if pressure persists
+      heapBaseline=null;               // re-baseline growth detector
+      banner.remove();
+    };
+    row.appendChild(dismiss);
+    banner.appendChild(row);
+    document.body.appendChild(banner);
+  }
+
+  // Get the live viewport iframe, recycling the element if we've crossed the
+  // rotation cadence (or if a heap-pressure event flagged forceRecycleNext).
+  // Recycling = synchronously destroy the prior <iframe> element and create a
+  // fresh one. This is the single most effective lever against long-session
+  // memory growth for heavy same-origin SPAs (Dynamics 365).
+  function getOrCreateViewportIframe(){
+    const needsRecycle = forceRecycleNext || rotationsSinceRecycle>=IFRAME_RECYCLE_EVERY_N;
+    if(viewport && viewport.isConnected && !needsRecycle) return viewport;
+    if(viewport){
+      try{ viewport.contentWindow && viewport.contentWindow.stop(); }catch(e){}
+      try{ viewport.remove(); }catch(e){}
+      viewport=null;
+    }
+    rotationsSinceRecycle=0;
+    forceRecycleNext=false;
+    const iframe=document.createElement('iframe');
+    iframe.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-popups');
+    iframe.className='viewport-iframe is-active';
+    iframe.src='about:blank';
+    viewportStage.appendChild(iframe);
+    iframe.addEventListener('load',()=>{
+      const key=pendingLoadKey;
+      if(!key) return;  // about:blank or stray event — ignore
+      const startTime=loadStartTime;
+      const loadEventMs=startTime ? Date.now()-startTime : null;
+      pendingLoadKey=null;
+      loadStartTime=null;
+      iframeProgress.classList.remove('loading');
+      iframeProgress.classList.add('loaded');
+      document.getElementById('badgeLoad').textContent=loadEventMs!=null ? `${loadEventMs}ms` : '\u2014';
+      document.getElementById('badgeRender').textContent='\u23F3\u2026';
+      document.getElementById('badgeSpinner').textContent='\u2014';
+      loadBadge.style.opacity='1';
+      monitorRenderDone(key,startTime,loadEventMs);
+    });
+    viewport=iframe;
+    return iframe;
+  }
+
+  // Periodic memory hygiene. With the single-iframe model the pool is at most
+  // one entry, so this just trims parent perf buffers and runs the heap-
+  // pressure check (in case a session has been left running for hours).
+  function evictStaleIframes(){
+    trimParentPerfBuffers();
+    enforceHeapPressureLimit();
+  }
+
+  // Drop every cached iframe and any pending load (used by Clear All).
+  function clearIframePool(){
+    if(renderMonitorCleanup){ renderMonitorCleanup(); renderMonitorCleanup=null; }
+    for(const e of iframePool.values()){
+      disposeIframe(e.iframe);
+    }
+    iframePool.clear();
+    viewport=null;
+    pendingLoadKey=null;
+    loadStartTime=null;
+    iframeProgress.className='iframe-progress';
+    loadBadge.style.opacity='0';
+  }
+
+  // Best-effort HTTP cache warm. The browser HTTP cache is automatically
+  // shared across tabs in the same profile, but only when the remote server
+  // sends a cacheable response (Cache-Control: max-age / public). For sites
+  // that send no-store / no-cache (which most authenticated apps do, including
+  // Dynamics 365), this is a no-op.
+  const _prefetched=new Set();
+  function prefetchSite(url){
+    if(!url||_prefetched.has(url)) return;
+    _prefetched.add(url);
+    try{
+      const link=document.createElement('link');
+      link.rel='prefetch';
+      link.as='document';
+      link.href=url;
+      link.crossOrigin='anonymous';
+      document.head.appendChild(link);
+    }catch(e){}
+  }
+
+  // Periodic eviction + heap-pressure check. Runs often enough to break the
+  // "slow leak over many rotations" pattern without burning CPU.
+  setInterval(evictStaleIframes,30*1000);
+
+  // Helper: detect visible animated spinner elements in a same-origin iframe.
+  // Checks CSS animationName on matched elements and their direct children
+  // (covers SVG rings, Fluent UI spinners, and class-based loaders).
+  function hasActiveSpinner(iDoc,iWin){
+    try{
+      const els=iDoc.querySelectorAll(
+        '[aria-busy="true"],[role="progressbar"],[role="status"],' +
+        '.ms-Spinner,.ms-spinner,' +
+        '[class*="spinner"],[class*="Spinner"],' +
+        '[class*="loading"],[class*="Loading"],' +
+        '[class*="loader"],[class*="Loader"]'
+      );
+      for(const el of els){
+        try{
+          const s=iWin.getComputedStyle(el);
+          if(s.display==='none'||s.visibility==='hidden') continue;
+          if(parseFloat(s.opacity||'1')<0.01) continue;
+          const anim=s.animationName;
+          if(anim&&anim!=='none') return true;
+          // also check direct children (SVG path, circle, etc.)
+          for(const child of el.children){
+            const cs=iWin.getComputedStyle(child);
+            if(cs.animationName&&cs.animationName!=='none') return true;
+          }
+        }catch(e){ continue; }
+      }
+    }catch(e){}
+    return false;
+  }
+
+  // Load timing: three-metric measurement
+  //   Load Event   — iframe 'load' event: network + HTML parse done
+  //   Render Done  — quiet period: all DOM mutations + resource fetches settled
+  //   Spinner Gone — same-origin only: polls for animated spinner elements
+  //                  and records when they have been absent for 800 ms
+  //   Cross-origin iframes: spinner detection returns N/A (DOM access blocked)
+  //   (The 'load' event is dispatched by the singleton listener attached in
+  //    getOrCreateViewportIframe; pendingLoadKey identifies which rotation it
+  //    belongs to.)
+
+  function monitorRenderDone(key,startTime,loadEventMs){
+    // ── Tuning knobs ─────────────────────────────────────────────────────────
+    // QUIET_NEEDED is the gap of "no meaningful activity" before we declare
+    // render done. Kept short because modern SPAs (Dynamics, Power Apps, etc.)
+    // never truly go silent — analytics beacons, polling, attribute mutations,
+    // and animation frames fire continuously. The filters below remove that
+    // noise from the activity signal so this small window is reliable.
+    const QUIET_NEEDED=1500;       // ms of no *meaningful* activity = settled
+    const POLL_MS=250;             // quiet-period check interval
+    const MAX_WAIT=20000;          // hard cap (20 s)
+    const SPINNER_POLL_MS=200;     // how often to check for spinner
+    const SPINNER_GONE_CONFIRM=600;// spinner must be absent this long to confirm
+    const MIN_NODES_FOR_ACTIVITY=3;// childList mutations below this are ignored
+    const MIN_RESOURCE_BYTES=1024; // resource fetches below this are ignored
+    // Beacon / telemetry / analytics URL patterns — these are background noise,
+    // not "the page is still loading". Matched against PerformanceResourceTiming.name.
+    const BEACON_RE=/\b(collect|track|telemetry|beacon|analytics|insights|appinsights|rum|hb|heartbeat|ping|metrics|log|logger|otlp|trace|pageview)\b|\.(?:gif|png)\?[^/]+(?:t=|tid=|sid=|ts=)/i;
+
+    let lastActivityTime=Date.now();
+    let finished=false;
+    const cleanupFns=[];
+    let spinnerGoneMs=null;
+    let spinnerActiveStart=null;  // when current spinner episode started
+    let spinnerTotalMs=0;          // total accumulated spinner-visible duration
+    function recordActivity(){ lastActivityTime=Date.now(); }
+
+    function finalize(){
+      if(finished) return;
+      finished=true;
+      // capture any in-progress spinner episode
+      if(spinnerActiveStart!==null){
+        spinnerTotalMs+=Date.now()-spinnerActiveStart;
+        spinnerActiveStart=null;
+      }
+      if(spinnerTotalMs>0){
+        spinnerGoneMs=spinnerTotalMs;
+        document.getElementById('badgeSpinner').textContent=`${spinnerGoneMs}ms`;
+      }
+      renderMonitorCleanup=null;
+      cleanupFns.forEach(fn=>{ try{fn();}catch(e){} });
+      iframeProgress.style.width=''; // clear inline override before complete class takes over
+      // Render done = (last meaningful activity) + QUIET_NEEDED, not "right now".
+      // This subtracts the trailing silent window so the metric reflects when
+      // the page actually settled — not when we got around to noticing.
+      const settleTime=Math.min(lastActivityTime+QUIET_NEEDED,Date.now());
+      const renderMs=Math.max(loadEventMs||0, settleTime-startTime);
+      // Cross-origin: use post-load activity duration as proxy (DOM access blocked)
+      if(!sameOrigin && loadEventMs!=null && spinnerGoneMs==null){
+        spinnerGoneMs=Math.max(0, renderMs-loadEventMs);
+        document.getElementById('badgeSpinner').textContent=`~${spinnerGoneMs}ms`;
+      }
+      saveLoadTime(key,loadEventMs,renderMs,spinnerGoneMs);
+      document.getElementById('badgeRender').textContent=`${renderMs}ms`;
+      iframeProgress.classList.remove('loaded');
+      iframeProgress.classList.add('complete');
+      setTimeout(()=>{
+        iframeProgress.classList.remove('complete');
+        iframeProgress.classList.add('done');
+        setTimeout(()=>{ iframeProgress.className='iframe-progress'; },700);
+      },500);
+    }
+
+    renderMonitorCleanup=()=>{ finished=true; cleanupFns.forEach(fn=>{ try{fn();}catch(e){} }); };
+
+    // ── Same-origin: full DOM + resource observation + spinner polling ───────
+    let sameOrigin=false;
+    try{
+      const iDoc=viewport.contentDocument;
+      const iWin=viewport.contentWindow;
+      if(!iDoc||!iWin) throw new Error('');
+      // MutationObserver: only childList changes, filtered to meaningful ones.
+      // Attribute and characterData mutations are explicitly skipped because
+      // they fire continuously in modern SPAs (ARIA updates, hover/focus class
+      // toggles, live regions, clocks) and create phantom "load" activity.
+      const mo=new MutationObserver(records=>{
+        for(const r of records){
+          if(r.type!=='childList') continue;
+          let added=0, hasHeavy=false;
+          for(const n of r.addedNodes){
+            if(n.nodeType!==1) continue; // skip text nodes
+            added++;
+            const tag=n.tagName;
+            if(tag==='SCRIPT'||tag==='STYLE'||tag==='LINK'||tag==='IFRAME'||tag==='IMG'){
+              hasHeavy=true; break;
+            }
+          }
+          if(hasHeavy || added>=MIN_NODES_FOR_ACTIVITY){ recordActivity(); return; }
+        }
+      });
+      mo.observe(iDoc.documentElement||iDoc,{childList:true,subtree:true});
+      cleanupFns.push(()=>mo.disconnect());
+      // PerformanceObserver: resource fetches, with telemetry / beacons filtered out.
+      try{
+        const PO=iWin.PerformanceObserver;
+        if(PO){
+          const po=new PO(list=>{
+            for(const entry of list.getEntries()){
+              const name=entry.name||'';
+              if(BEACON_RE.test(name)) continue;
+              const size=entry.transferSize||entry.encodedBodySize||0;
+              // Tiny responses (likely heartbeats or 304s) are ignored
+              if(size>0 && size<MIN_RESOURCE_BYTES) continue;
+              recordActivity();
+              return;
+            }
+          });
+          po.observe({type:'resource',buffered:false});
+          cleanupFns.push(()=>po.disconnect());
+        }
+      }catch(e){}
+      // Spinner polling: accumulates total time any spinner is actively visible
+      // for the *spinner* metric only. It no longer feeds into recordActivity()
+      // because long-running app spinners (background polling indicators) were
+      // keeping the quiet timer alive indefinitely.
+      document.getElementById('badgeSpinner').textContent='⏳…';
+      let spinnerGoneConfirmStart=null;
+      let spinnerTimer=null;
+      function pollSpinner(){
+        if(finished) return;
+        const active=hasActiveSpinner(iDoc,iWin);
+        const now=Date.now();
+        if(active){
+          if(!spinnerActiveStart) spinnerActiveStart=now;
+          spinnerGoneConfirmStart=null;
+          // show running total including current in-progress episode
+          const running=spinnerTotalMs+(now-spinnerActiveStart);
+          document.getElementById('badgeSpinner').textContent=`${running}ms ⏳`;
+          spinnerTimer=setTimeout(pollSpinner,SPINNER_POLL_MS);
+        } else if(spinnerActiveStart!==null){
+          // spinner stopped — wait for confirmation it's truly gone
+          if(!spinnerGoneConfirmStart) spinnerGoneConfirmStart=now;
+          if(now-spinnerGoneConfirmStart>=SPINNER_GONE_CONFIRM){
+            spinnerTotalMs+=spinnerGoneConfirmStart-spinnerActiveStart;
+            spinnerActiveStart=null;
+            spinnerGoneConfirmStart=null;
+            spinnerGoneMs=spinnerTotalMs;
+            document.getElementById('badgeSpinner').textContent=`${spinnerGoneMs}ms`;
+            // Stop after first confirmed-gone; chasing late spinners (lazy
+            // hover loaders, periodic refreshes) was the dominant source of
+            // inflated render times.
+          } else {
+            spinnerTimer=setTimeout(pollSpinner,SPINNER_POLL_MS);
+          }
+        } else {
+          // no spinner active yet — keep watching only until MAX_WAIT
+          if(now-startTime<MAX_WAIT){
+            spinnerTimer=setTimeout(pollSpinner,SPINNER_POLL_MS);
+          } else {
+            document.getElementById('badgeSpinner').textContent=spinnerTotalMs>0?`${spinnerTotalMs}ms`:'none';
+          }
+        }
+      }
+      cleanupFns.push(()=>{ if(spinnerTimer) clearTimeout(spinnerTimer); });
+      pollSpinner();
+      // ── Progress-bar 90% detector ──────────────────────────────────────────
+      // Polls progress-bar elements inside the iframe every 200 ms.
+      // As soon as any bar reaches ≥90%, the page is considered rendered and
+      // finalize() is called immediately — the parent progress bar then
+      // completes its own animation forward to 100% with no backward movement.
+      let progPollTimer=null;
+      function pollProgress90(){
+        if(finished) return;
+        try{
+          const candidates=iDoc.querySelectorAll(
+            'progress,[role="progressbar"],[class*="progress"],[class*="Progress"]'
+          );
+          for(const el of candidates){
+            try{
+              const s=iWin.getComputedStyle(el);
+              if(s.display==='none'||s.visibility==='hidden') continue;
+              // Normalise current value to 0–100
+              let val=NaN;
+              const ariaNow=parseFloat(el.getAttribute('aria-valuenow')||'');
+              const ariaMax=parseFloat(el.getAttribute('aria-valuemax')||'100');
+              const ariaMin=parseFloat(el.getAttribute('aria-valuemin')||'0');
+              if(!isNaN(ariaNow)){
+                val=((ariaNow-ariaMin)/(ariaMax-ariaMin))*100;
+              } else if(el.tagName.toLowerCase()==='progress'&&el.max>0){
+                val=(el.value/el.max)*100;
+              } else {
+                const pw=el.parentElement?el.parentElement.offsetWidth:0;
+                if(pw>0) val=(el.offsetWidth/pw)*100;
+              }
+              if(isNaN(val)) continue;
+              // Bar reached ≥90% → render done
+              if(val>=90){ finalize(); return; }
+            }catch(e){ continue; }
+          }
+        }catch(e){}
+        if(!finished) progPollTimer=setTimeout(pollProgress90,200);
+      }
+      cleanupFns.push(()=>{ if(progPollTimer) clearTimeout(progPollTimer); });
+      pollProgress90();
+      sameOrigin=true;
+    }catch(e){
+      // Cross-origin — contentDocument access is blocked by the browser
+    }
+
+    // ── Cross-origin fallback ────────────────────────────────────────────────
+    // DOM and resource observation inside a cross-origin iframe is blocked by
+    // the browser. A parent-page PerformanceObserver would capture parent-page
+    // activity — not iframe activity — so we don't use one here. The quiet-
+    // period poller below will naturally expire after QUIET_NEEDED ms of
+    // silence following the load event.
+    if(!sameOrigin){
+      document.getElementById('badgeSpinner').textContent='N/A';
+    }
+
+    // ── Quiet-period poller ──────────────────────────────────────────────────
+    let pollTimer=null;
+    function pollCheck(){
+      if(finished) return;
+      const now=Date.now();
+      if(now-startTime>=MAX_WAIT){ finalize(); return; }
+      const quietElapsed=now-lastActivityTime;
+      if(quietElapsed>=QUIET_NEEDED){ finalize(); return; }
+      // Inch bar from 95% → 99% based on quiet-period progress so stall is visibly active
+      const quietPct=Math.min(quietElapsed/QUIET_NEEDED,1);
+      iframeProgress.style.width=`${95+quietPct*4}%`;
+      pollTimer=setTimeout(pollCheck,POLL_MS);
+    }
+    cleanupFns.push(()=>{ if(pollTimer) clearTimeout(pollTimer); });
+    pollTimer=setTimeout(pollCheck,POLL_MS);
+  }
+
+  function tick(){
+    const sites=loadSites();
+    if(!sites.length) return;
+    // Heap guard runs on every rotation — catches pressure even when revisiting
+    // a same-key URL where setViewport might short-circuit some cleanup paths.
+    enforceHeapPressureLimit();
+    if(heapCriticalTriggered) return;
+    let idx=loadIndex();
+    idx=(idx+1)%sites.length;
+    saveIndex(idx);
+    setViewport(sites[idx].url, sites[idx].name);
+    recordView(sites[idx].url, sites[idx].name);
+    
+    const sec=loadInterval();
+    nextTickTime=Date.now()+sec*1000;
+  }
+
+  function start(){
+    const sites=loadSites();
+    if(!sites.length){ alert("Add at least one site."); return; }
+
+    const sec=Number(intervalInput.value)||20;
+    saveInterval(sec);
+    saveEnabled(true);
+
+    const sessionMins=Number(sessionLengthSelect.value)||60;
+    saveSessionLength(sessionMins);
+    if(sessionEndTimer){ clearTimeout(sessionEndTimer); sessionEndTimer=null; }
+    sessionFrozenMs=null;
+    sessionEndTimer=setTimeout(()=>{
+      stop();
+      // Abort any in-progress iframe page load
+      if(renderMonitorCleanup){ renderMonitorCleanup(); renderMonitorCleanup=null; }
+      pendingLoadKey=null;
+      try{ viewport.contentWindow.stop(); }catch(e){}
+      iframeProgress.className='iframe-progress';
+      loadBadge.style.opacity='0';
+    },sessionMins*60*1000);
+
+    const idx=loadIndex()%sites.length;
+    hideRacePrize();
+    setViewport(sites[idx].url, sites[idx].name);
+    nextTickTime=Date.now()+sec*1000;
+
+    createWorker();
+    worker.postMessage({cmd:'start',sec});
+    timer=true; // flag: rotation is active
+    startRaceMotion();
+
+    sessionFrozenMs=null; // unfreeze so the live timer runs for the new session
+    sessionStart=Date.now();
+    if(sessionTimerInterval) clearInterval(sessionTimerInterval);
+    sessionTimerInterval=setInterval(renderAnalytics,1000);
+
+    if(countdownInterval) clearInterval(countdownInterval);
+    countdownInterval=setInterval(updateCountdown,1000);
+    updateCountdown();
+    renderAnalytics();
+  }
+
+  function stop(){
+    if(worker){ worker.postMessage({cmd:'stop'}); worker.terminate(); worker=null; }
+    if(sessionEndTimer){ clearTimeout(sessionEndTimer); sessionEndTimer=null; }
+    // Freeze the session timer at this moment so it doesn't creep upward later
+    if(sessionStart && sessionFrozenMs===null) sessionFrozenMs=Date.now()-sessionStart;
+    timer=null;
+    stopRaceMotion();
+    nextTickTime=null;
+    saveEnabled(false);
+    
+    if(countdownInterval) clearInterval(countdownInterval);
+    countdownInterval=null;
+    updateCountdown();
+    if(sessionTimerInterval){ clearInterval(sessionTimerInterval); sessionTimerInterval=null; }
+    awardRaceWinner();
+    renderList();
+    renderAnalytics();
+  }
+
+  addBtn.onclick=()=>{
+    const url=newUrlInput.value.trim();
+    if(!isHttpUrl(url)){ alert("Invalid URL"); return; }
+
+    const name=newNameInput.value.trim();
+    const list=loadSites();
+
+    if(editIndex!==null){
+      // Update existing entry
+      list[editIndex]={url,name};
+      saveSites(list);
+      editIndex=null;
+      addBtn.textContent='Add';
+    }else{
+      // Add new entry
+      if(list.length>=MAX_SITES){ alert("Limit reached."); return; }
+      list.push({url,name});
+      saveSites(list);
+    }
+    prefetchSite(url);
+
+    newUrlInput.value="";
+    newNameInput.value="";
+    renderList();
+  };
+
+  clearBtn.onclick=()=>{
+    if(confirm("Clear all sites?")){
+      saveSites([]);
+      saveIndex(0);
+      clearIframePool();
+      renderList();
+    }
+  };
+
+  exportBtn.onclick=()=>{
+    const sites=loadSites();
+    if(!sites.length){ alert("No sites to export."); return; }
+    const demoNameVal=document.getElementById('demoName').value.trim();
+    const datePart=new Date().toISOString().slice(0,10);
+    const defaultName=demoNameVal ? `${demoNameVal}-${datePart}` : `sites-export-${datePart}`;
+    const name=prompt("Enter a filename for the export:",defaultName);
+    if(name===null) return;
+    const filename=(name.trim()||defaultName).replace(/\.json$/i,'')+'.json';
+    const payload={ demoName: demoNameVal, sites };
+    const json=JSON.stringify(payload,null,2);
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  importBtn.onclick=()=>{
+    const input=document.createElement('input');
+    input.type='file';
+    input.accept='.json';
+    input.onchange=e=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        try{
+          const parsed=JSON.parse(ev.target.result);
+          // Support both legacy array format and new object format
+          let importedSites, importedDemoName='';
+          if(Array.isArray(parsed)){
+            importedSites=parsed;
+          } else if(parsed && Array.isArray(parsed.sites)){
+            importedSites=parsed.sites;
+            importedDemoName=parsed.demoName||'';
+          } else {
+            alert("Invalid JSON format."); return;
+          }
+          const valid=importedSites.every(s=>s.url&&isHttpUrl(s.url));
+          if(!valid){ alert("Invalid site data."); return; }
+          if(confirm(`Import ${importedSites.length} site(s)? This will replace current sites.`)){
+            saveSites(importedSites);
+            saveIndex(0);
+            document.getElementById('demoName').value=importedDemoName;
+            renderList();
+          }
+        }catch(err){
+          alert("Failed to parse JSON: "+err.message);
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
+  applyIntervalBtn.onclick=()=>{
+    const sec=Math.max(5,Math.min(3600,Number(intervalInput.value)||20));
+    saveInterval(sec);
+    if(loadEnabled()){ stop(); start(); }
+  };
+
+  startBtn.onclick=start;
+  stopBtn.onclick=stop;
+  raceToggleBtn.onclick=()=>{
+    const willOpen=!raceFlyout.classList.contains('open');
+    if(willOpen) markRaceAccessed();
+    setRaceFlyoutOpen(willOpen);
+  };
+  raceCloseBtn.onclick=()=>setRaceFlyoutOpen(false);
+  raceVibeControls.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-vibe]');
+    if(!btn) return;
+    applyRaceVibe(btn.dataset.vibe);
+  });
+  themeToggleBtn.onclick=()=>{
+    const next=document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+    applyTheme(next);
+  };
+  openAppsBtn.onclick=openCurrentEnvironmentAppsPage;
+  launchCswBtn.onclick=()=>openDynamicsApp(DEMO_APPS.csw);
+  launchCeBtn.onclick =()=>openDynamicsApp(DEMO_APPS.ce);
+  launchFsBtn.onclick =()=>openDynamicsApp(DEMO_APPS.fs);
+
+  // Collapsible slide panels
+  const mainEl = document.querySelector('main');
+  const SITES_FULL = '400px', ANALYTICS_FULL = '360px', COLLAPSED_W = '18px';
+  let sitesCollapsed     = localStorage.getItem('panel.sites.collapsed') === 'true';
+  let analyticsCollapsed = localStorage.getItem('panel.analytics.collapsed') === 'true';
+
+  function updateGrid(){
+    const c0 = sitesCollapsed     ? COLLAPSED_W : SITES_FULL;
+    const c2 = analyticsCollapsed ? COLLAPSED_W : ANALYTICS_FULL;
+    mainEl.style.gridTemplateColumns = `${c0} 1fr ${c2}`;
+  }
+
+  function setSitesCollapsed(val){
+    sitesCollapsed = val;
+    const sec = document.getElementById('urlPanel');
+    sec.classList.toggle('panel-slid-left', val);
+    localStorage.setItem('panel.sites.collapsed', val);
+    updateGrid();
+  }
+
+  function setAnalyticsCollapsed(val){
+    analyticsCollapsed = val;
+    const sec = document.getElementById('analyticsPanel');
+    sec.classList.toggle('panel-slid-right', val);
+    localStorage.setItem('panel.analytics.collapsed', val);
+    updateGrid();
+  }
+
+  document.getElementById('urlPanelTab').addEventListener('click', ()=> setSitesCollapsed(!sitesCollapsed));
+  document.getElementById('analyticsPanelTab').addEventListener('click', ()=> setAnalyticsCollapsed(!analyticsCollapsed));
+
+  // Collapsible top header (mirrors the side-panel collapse pattern)
+  const HEADER_COLLAPSED_KEY = 'panel.header.collapsed';
+  let headerCollapsed = localStorage.getItem(HEADER_COLLAPSED_KEY) === 'true';
+  const headerCollapseBtn = document.getElementById('headerCollapseBtn');
+  function setHeaderCollapsed(val){
+    headerCollapsed = val;
+    document.body.classList.toggle('header-collapsed', val);
+    headerCollapseBtn.setAttribute('aria-expanded', String(!val));
+    headerCollapseBtn.setAttribute('title', val ? 'Expand header' : 'Collapse header');
+    headerCollapseBtn.setAttribute('aria-label', val ? 'Expand header' : 'Collapse header');
+    localStorage.setItem(HEADER_COLLAPSED_KEY, val);
+  }
+  headerCollapseBtn.addEventListener('click', ()=> setHeaderCollapsed(!headerCollapsed));
+  setHeaderCollapsed(headerCollapsed);
+
+  // Kiosk mode — like focus mode, but also hides the floating Open Apps Page
+  // button and the load/status badge for a clean presentation surface.
+  const KIOSK_KEY = 'panel.kiosk.enabled';
+  const KIOSK_PRIOR_KEY = 'panel.kiosk.prior';
+  const kioskBtn = document.getElementById('kioskBtn');
+  function setKioskMode(enabled){
+    if(enabled){
+      localStorage.setItem(KIOSK_PRIOR_KEY, JSON.stringify({
+        sites: sitesCollapsed,
+        analytics: analyticsCollapsed,
+        header: headerCollapsed
+      }));
+      setSitesCollapsed(true);
+      setAnalyticsCollapsed(true);
+      setHeaderCollapsed(true);
+      document.body.classList.add('kiosk-mode');
+    } else {
+      let prior = { sites: false, analytics: false, header: false };
+      try { prior = JSON.parse(localStorage.getItem(KIOSK_PRIOR_KEY) || '') || prior; } catch(e) {}
+      setSitesCollapsed(!!prior.sites);
+      setAnalyticsCollapsed(!!prior.analytics);
+      setHeaderCollapsed(!!prior.header);
+      document.body.classList.remove('kiosk-mode');
+    }
+    localStorage.setItem(KIOSK_KEY, String(enabled));
+    kioskBtn.setAttribute('aria-pressed', String(enabled));
+    kioskBtn.classList.toggle('accent', enabled);
+    kioskBtn.title = enabled ? 'Exit kiosk mode' : 'Kiosk mode — collapse panels and hide overlays';
+  }
+  kioskBtn.addEventListener('click', ()=>{
+    const enabled = kioskBtn.getAttribute('aria-pressed') !== 'true';
+    setKioskMode(enabled);
+  });
+  setKioskMode(localStorage.getItem(KIOSK_KEY) === 'true');
+
+  resetAnalyticsBtn.onclick=()=>{
+    if(confirm('Reset all analytics data?')){
+      localStorage.removeItem(ANALYTICS_KEY);
+      sessionStart=loadEnabled() ? Date.now() : null;
+      sessionFrozenMs=null;
+      renderAnalytics();
+    }
+  };
+
+  sessionLengthSelect.value=loadSessionLength();
+  sessionLengthSelect.addEventListener('change',()=>saveSessionLength(Number(sessionLengthSelect.value)||60));
+  applyTheme(loadTheme());
+  applyRaceVibe(loadRaceVibe());
+  setRaceFlyoutOpen(loadRaceFlyoutOpen());
+  intervalInput.value=loadInterval();
+  renderList();
+  renderAnalytics();
+  if(loadEnabled()) startRaceMotion();
+  if(loadEnabled() && loadSites().length) start();
+</script>
+
+</body>
+</html>
